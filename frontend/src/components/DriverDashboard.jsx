@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useCallback, useMemo, useState, useEffect } from 'react';
 import { API_BASE_URL } from '../config';
 import { 
   Plus, 
@@ -10,7 +10,6 @@ import {
   AlertCircle, 
   Calendar, 
   Phone, 
-  ShieldAlert, 
   Award
 } from 'lucide-react';
 
@@ -39,7 +38,7 @@ export default function DriverDashboard({ token }) {
   const [isOffline, setIsOffline] = useState(false);
 
   // Default Mock Data for Offline fallback
-  const mockDrivers = [
+  const mockDrivers = useMemo(() => [
     {
       id: 'mock-d1',
       name: 'Rajesh Kumar',
@@ -80,10 +79,10 @@ export default function DriverDashboard({ token }) {
       safety_score: 65,
       status: 'Suspended'
     }
-  ];
+  ], []);
 
   // Fetch Drivers
-  const fetchDrivers = async () => {
+  const fetchDrivers = useCallback(async () => {
     setLoading(true);
     setError('');
 
@@ -102,7 +101,11 @@ export default function DriverDashboard({ token }) {
     }
 
     try {
-      let url = `${API_BASE_URL}/drivers/`;
+      let url = `${API_BASE_URL}/drivers`;
+      const params = [];
+      if (statusFilter) params.push(`status=${encodeURIComponent(statusFilter)}`);
+      if (search) params.push(`search=${encodeURIComponent(search)}`);
+      if (params.length > 0) url += `?${params.join('&')}`;
       const response = await fetch(url, {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -130,11 +133,12 @@ export default function DriverDashboard({ token }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [mockDrivers, search, statusFilter, token]);
 
   useEffect(() => {
+    // fetchDrivers is intentionally kept as a local workflow helper.
     fetchDrivers();
-  }, [token]);
+  }, [fetchDrivers]);
 
   // Handle Form Inputs
   const handleChange = (e) => {
@@ -206,7 +210,7 @@ export default function DriverDashboard({ token }) {
     try {
       const url = editId 
         ? `${API_BASE_URL}/drivers/${editId}` 
-        : `${API_BASE_URL}/drivers/`;
+        : `${API_BASE_URL}/drivers`;
       const method = editId ? 'PUT' : 'POST';
 
       const response = await fetch(url, {
@@ -249,7 +253,7 @@ export default function DriverDashboard({ token }) {
 
       if (!response.ok) throw new Error('Delete failed');
       fetchDrivers();
-    } catch (err) {
+    } catch {
       setError('Could not delete driver');
     }
   };
@@ -308,6 +312,12 @@ export default function DriverDashboard({ token }) {
         </button>
       </div>
 
+      {error && (
+        <div className="bg-red-500/10 border border-red-500/20 text-red-500 p-3 rounded-2xl mb-6 text-sm flex items-center gap-2">
+          <AlertCircle className="w-4 h-4" />
+          <span>{error}</span>
+        </div>
+      )}
       {isOffline && (
         <div className="bg-amber-500/10 border border-amber-500/20 text-amber-500 p-3 rounded-2xl mb-6 text-sm flex items-center gap-2">
           <AlertCircle className="w-4 h-4" />
@@ -422,14 +432,14 @@ export default function DriverDashboard({ token }) {
                             className="p-2 text-slate-500 hover:text-blue-500 hover:bg-blue-500/10 rounded-xl transition-all"
                             title="Edit"
                           >
-                            <Edit className="w-4.5 h-4.5" />
+                            <Edit className="w-4 h-4" />
                           </button>
                           <button
                             onClick={() => handleDelete(driver.id)}
                             className="p-2 text-slate-500 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all"
                             title="Delete"
                           >
-                            <Trash2 className="w-4.5 h-4.5" />
+                            <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
                       </td>
@@ -513,7 +523,7 @@ export default function DriverDashboard({ token }) {
                       onChange={handleChange}
                       className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 pl-4 pr-10 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-sm"
                     />
-                    <Phone className="absolute right-3.5 inset-y-0 my-auto w-4.5 h-4.5 text-slate-400" />
+                    <Phone className="absolute right-3.5 inset-y-0 my-auto w-4 h-4 text-slate-400" />
                   </div>
                 </div>
                 <div>
@@ -530,7 +540,7 @@ export default function DriverDashboard({ token }) {
                       onChange={handleChange}
                       className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 pl-4 pr-10 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-sm"
                     />
-                    <Award className="absolute right-3.5 inset-y-0 my-auto w-4.5 h-4.5 text-slate-400" />
+                    <Award className="absolute right-3.5 inset-y-0 my-auto w-4 h-4 text-slate-400" />
                   </div>
                 </div>
                 <div>

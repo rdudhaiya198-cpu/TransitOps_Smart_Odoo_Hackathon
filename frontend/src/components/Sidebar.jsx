@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { 
   LayoutDashboard, 
   Truck, 
@@ -8,8 +8,7 @@ import {
   Sun, 
   Menu, 
   X, 
-  ShieldAlert, 
-  FileText
+  ShieldAlert
 } from 'lucide-react';
 
 export default function Sidebar({ 
@@ -150,7 +149,7 @@ export default function Sidebar({
           {/* Logout Button */}
           <button
             onClick={onLogout}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 border border-slate-800 hover:border-red-500/20 text-slate-400 hover:text-red-400 rounded-xl text-xs font-semibold transition-all duration-200 bg-slate-850 hover:bg-red-500/5"
+            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 border border-slate-800 hover:border-red-500/20 text-slate-400 hover:text-red-400 rounded-xl text-xs font-semibold transition-all duration-200 bg-slate-800 hover:bg-red-500/5"
           >
             <LogOut className="w-4 h-4" />
             Sign Out

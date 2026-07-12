@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useCallback, useMemo, useState, useEffect } from 'react';
 import { API_BASE_URL } from '../config';
 import { 
   Plus, 
@@ -9,7 +9,6 @@ import {
   Truck, 
   AlertCircle, 
   Gauge, 
-  DollarSign, 
   Weight, 
   FileText
 } from 'lucide-react';
@@ -44,7 +43,7 @@ export default function VehicleDashboard({ token }) {
   const [isOffline, setIsOffline] = useState(false);
 
   // Default Mock Data for Offline fallback
-  const mockVehicles = [
+  const mockVehicles = useMemo(() => [
     {
       id: 'mock-v1',
       registration_number: 'MH-12-PQ-9876',
@@ -85,10 +84,10 @@ export default function VehicleDashboard({ token }) {
       acquisition_cost: 1800000,
       status: 'Retired'
     }
-  ];
+  ], []);
 
   // Fetch Vehicles
-  const fetchVehicles = async () => {
+  const fetchVehicles = useCallback(async () => {
     setLoading(true);
     setError('');
     
@@ -109,7 +108,8 @@ export default function VehicleDashboard({ token }) {
     try {
       let url = `${API_BASE_URL}/vehicles`;
       const params = [];
-      if (statusFilter) params.push(`status=${statusFilter}`);
+      if (statusFilter) params.push(`status=${encodeURIComponent(statusFilter)}`);
+      if (search) params.push(`search=${encodeURIComponent(search)}`);
       if (params.length > 0) url += `?${params.join('&')}`;
 
       const response = await fetch(url, {
@@ -139,11 +139,12 @@ export default function VehicleDashboard({ token }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [mockVehicles, search, statusFilter, token]);
 
   useEffect(() => {
+    // fetchVehicles is intentionally kept as a local workflow helper.
     fetchVehicles();
-  }, [token, statusFilter]);
+  }, [fetchVehicles]);
 
   // Handle Form Inputs
   const handleChange = (e) => {
@@ -217,7 +218,7 @@ export default function VehicleDashboard({ token }) {
     try {
       const url = editId 
         ? `${API_BASE_URL}/vehicles/${editId}` 
-        : `${API_BASE_URL}/vehicles/`;
+        : `${API_BASE_URL}/vehicles`;
       const method = editId ? 'PUT' : 'POST';
 
       const response = await fetch(url, {
@@ -260,7 +261,7 @@ export default function VehicleDashboard({ token }) {
 
       if (!response.ok) throw new Error('Delete failed');
       fetchVehicles();
-    } catch (err) {
+    } catch {
       setError('Could not delete vehicle');
     }
   };
@@ -348,6 +349,12 @@ export default function VehicleDashboard({ token }) {
         </button>
       </div>
 
+      {error && (
+        <div className="bg-red-500/10 border border-red-500/20 text-red-500 p-3 rounded-2xl mb-6 text-sm flex items-center gap-2">
+          <AlertCircle className="w-4 h-4" />
+          <span>{error}</span>
+        </div>
+      )}
       {isOffline && (
         <div className="bg-amber-500/10 border border-amber-500/20 text-amber-500 p-3 rounded-2xl mb-6 text-sm flex items-center gap-2">
           <AlertCircle className="w-4 h-4" />
@@ -439,21 +446,21 @@ export default function VehicleDashboard({ token }) {
                           className="p-2 text-slate-500 hover:text-purple-500 hover:bg-purple-500/10 rounded-xl transition-all"
                           title="Manage Documents"
                         >
-                          <FileText className="w-4.5 h-4.5" />
+                          <FileText className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => openEditModal(vehicle)}
                           className="p-2 text-slate-500 hover:text-blue-500 hover:bg-blue-500/10 rounded-xl transition-all"
                           title="Edit"
                         >
-                          <Edit className="w-4.5 h-4.5" />
+                          <Edit className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => handleDelete(vehicle.id)}
                           className="p-2 text-slate-500 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all"
                           title="Delete"
                         >
-                          <Trash2 className="w-4.5 h-4.5" />
+                          <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
                     </td>
@@ -527,7 +534,7 @@ export default function VehicleDashboard({ token }) {
                       onChange={handleChange}
                       className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 pl-4 pr-10 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-sm"
                     />
-                    <Weight className="absolute right-3.5 inset-y-0 my-auto w-4.5 h-4.5 text-slate-400" />
+                    <Weight className="absolute right-3.5 inset-y-0 my-auto w-4 h-4 text-slate-400" />
                   </div>
                 </div>
                 <div>
@@ -543,7 +550,7 @@ export default function VehicleDashboard({ token }) {
                       onChange={handleChange}
                       className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 pl-4 pr-10 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-sm"
                     />
-                    <Gauge className="absolute right-3.5 inset-y-0 my-auto w-4.5 h-4.5 text-slate-400" />
+                    <Gauge className="absolute right-3.5 inset-y-0 my-auto w-4 h-4 text-slate-400" />
                   </div>
                 </div>
                 <div>
@@ -559,7 +566,7 @@ export default function VehicleDashboard({ token }) {
                       onChange={handleChange}
                       className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 pl-8 pr-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-sm"
                     />
-                    <span className="absolute left-3.5 inset-y-0 my-auto h-fit text-sm text-slate-400 font-bold">₹</span>
+                    <span className="absolute left-3.5 inset-y-0 my-auto h-fit text-sm text-slate-400 font-bold">Rs.</span>
                   </div>
                 </div>
                 <div>
@@ -646,7 +653,7 @@ export default function VehicleDashboard({ token }) {
                           <FileText className="w-4 h-4 text-purple-400 flex-shrink-0" />
                           <div className="min-w-0">
                             <p className="text-xs font-bold truncate leading-tight">{doc.name}</p>
-                            <span className="text-[9px] text-slate-500">{doc.date} • {doc.size}</span>
+                            <span className="text-[9px] text-slate-500">{doc.date} - {doc.size}</span>
                           </div>
                         </div>
                         <button

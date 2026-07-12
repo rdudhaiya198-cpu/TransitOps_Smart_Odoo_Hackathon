@@ -1,13 +1,14 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routers import auth, vehicles, drivers, trips, maintenance, expenses, dashboard
+from core.config import settings
 
 app = FastAPI(title="TransitOps API", description="Smart Transport Operations Platform")
 
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # In production, restrict to frontend URLs
+    allow_origins=[settings.FRONTEND_URL, "http://localhost:3000", "http://localhost:8000"], # In production, restrict to frontend URLs
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

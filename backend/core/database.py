@@ -1,7 +1,12 @@
 from supabase import create_client, Client
 from .config import settings
 
+_supabase: Client | None = None
+
 def get_supabase() -> Client:
+    global _supabase
     if not settings.SUPABASE_URL or not settings.SUPABASE_KEY:
         raise ValueError("Supabase credentials not found in environment")
-    return create_client(settings.SUPABASE_URL, settings.SUPABASE_KEY)
+    if _supabase is None:
+        _supabase = create_client(settings.SUPABASE_URL, settings.SUPABASE_KEY)
+    return _supabase
