@@ -1,9 +1,9 @@
 import sys
 import os
 
-# Add the 'backend' directory to the Python path so imports work correctly
-backend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'backend'))
-if backend_path not in sys.path:
-    sys.path.insert(0, backend_path)
+# Add the parent directory and backend directory to the Python path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../backend')))
 
-from main import app
+# Import the FastAPI app instance from backend/main.py
+from backend.main import app

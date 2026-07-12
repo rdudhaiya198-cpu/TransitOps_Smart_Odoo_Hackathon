@@ -1,9 +1,15 @@
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routers import auth, vehicles, drivers, trips, maintenance, expenses, dashboard
 from core.config import settings
 
-app = FastAPI(title="TransitOps API", description="Smart Transport Operations Platform")
+root_path = "/api" if os.environ.get("VERCEL") else ""
+app = FastAPI(
+    title="TransitOps API",
+    description="Smart Transport Operations Platform",
+    root_path=root_path
+)
 
 # Configure CORS
 app.add_middleware(

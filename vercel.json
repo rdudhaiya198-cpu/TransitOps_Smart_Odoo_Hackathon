@@ -1,14 +1,26 @@
 {
   "version": 2,
+  "builds": [
+    {
+      "src": "frontend/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    },
+    {
+      "src": "api/index.py",
+      "use": "@vercel/python"
+    }
+  ],
   "routes": [
-    { "src": "/auth/(.*)", "dest": "/api/index.py" },
-    { "src": "/vehicles/(.*)", "dest": "/api/index.py" },
-    { "src": "/drivers/(.*)", "dest": "/api/index.py" },
-    { "src": "/trips/(.*)", "dest": "/api/index.py" },
-    { "src": "/maintenance/(.*)", "dest": "/api/index.py" },
-    { "src": "/expenses/(.*)", "dest": "/api/index.py" },
-    { "src": "/dashboard/(.*)", "dest": "/api/index.py" },
-    { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "/index.html" }
+    {
+      "src": "/api/(.*)",
+      "dest": "api/index.py"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "frontend/$1"
+    }
   ]
 }
