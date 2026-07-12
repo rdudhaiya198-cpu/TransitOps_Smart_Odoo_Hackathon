@@ -12,6 +12,17 @@ def run_command(command, cwd=None, shell=True):
 
 def main():
     root_dir = os.path.dirname(os.path.abspath(__file__))
+    
+    # Load .env variables
+    env_path = os.path.join(root_dir, ".env")
+    if os.path.exists(env_path):
+        with open(env_path, "r") as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith("#") and "=" in line:
+                    key, val = line.split("=", 1)
+                    os.environ[key] = val
+
     backend_dir = os.path.join(root_dir, "backend")
     frontend_dir = os.path.join(root_dir, "frontend")
     
@@ -49,7 +60,10 @@ def main():
     # ---------------------------------------------------------
     print("\n=> Starting Backend (FastAPI) and Frontend (Vite) servers...")
     
-    backend_cmd = [python_exec, "-m", "uvicorn", "main:app", "--reload"]
+    backend_port = os.environ.get("BACKEND_PORT", "8000")
+    frontend_port = os.environ.get("FRONTEND_PORT", "5173")
+    
+    backend_cmd = [python_exec, "-m", "uvicorn", "main:app", "--reload", "--port", backend_port]
     # We use shell=True for npm to let it resolve in the environment properly on Windows
     frontend_cmd = "npm run dev"
     
@@ -58,8 +72,8 @@ def main():
     
     print("\n" + "="*50)
     print("Services are up and running!")
-    print("Frontend: http://localhost:5173")
-    print("Backend API: http://localhost:8000")
+    print(f"Frontend: http://localhost:{frontend_port}")
+    print(f"Backend API: http://localhost:{backend_port}")
     print("Press Ctrl+C to stop both servers.")
     print("="*50 + "\n")
     
