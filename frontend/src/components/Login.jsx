@@ -59,7 +59,11 @@ export default function Login({ onLoginSuccess }) {
         onLoginSuccess(data.access_token, data.user);
       }
     } catch (err) {
-      setError(err.message || 'Connection error with FastAPI backend. Make sure it is running.');
+      if (err.message && (err.message.includes('fetch') || err.message.includes('NetworkError'))) {
+        setError('Connection error with FastAPI backend. Make sure the server is running and accessible.');
+      } else {
+        setError(err.message || 'Connection error with FastAPI backend. Make sure it is running.');
+      }
     } finally {
       setLoading(false);
     }

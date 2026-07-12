@@ -5,9 +5,24 @@ import {
   Users, 
   Activity, 
   ShieldCheck, 
-  DollarSign
+  DollarSign,
+  AlertCircle
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+
+const mockVehicles = [
+  { id: 'mock-v1', registration_number: 'MH-12-PQ-9876', name_model: 'Tata Prima 4025.S', type: 'Heavy Truck', max_load_capacity: 40000, odometer: 125430, acquisition_cost: 4500000, status: 'Available' },
+  { id: 'mock-v2', registration_number: 'DL-01-AB-1234', name_model: 'Mahindra Blazo X 35', type: 'Medium Truck', max_load_capacity: 28000, odometer: 85200, acquisition_cost: 3200000, status: 'On Trip' },
+  { id: 'mock-v3', registration_number: 'KA-03-XY-5678', name_model: 'Volvo FM 420', type: 'Heavy Truck', max_load_capacity: 49000, odometer: 245900, acquisition_cost: 6500000, status: 'In Shop' },
+  { id: 'mock-v4', registration_number: 'GJ-01-ZZ-9999', name_model: 'Ashok Leyland Ecomet', type: 'Light Truck', max_load_capacity: 12000, odometer: 310500, acquisition_cost: 1800000, status: 'Retired' }
+];
+
+const mockDrivers = [
+  { id: 'mock-d1', name: 'Rajesh Kumar', license_number: 'DL-1420180098765', license_category: 'Commercial Heavy', license_expiry_date: '2028-12-15', contact_number: '+91 98765 43210', safety_score: 95, status: 'Available' },
+  { id: 'mock-d2', name: 'Amit Patel', license_number: 'GJ-0120150012345', license_category: 'Commercial Heavy', license_expiry_date: '2029-05-20', contact_number: '+91 87654 32109', safety_score: 88, status: 'On Trip' },
+  { id: 'mock-d3', name: 'Vikram Singh', license_number: 'HR-2620120054321', license_category: 'Medium Vehicle', license_expiry_date: '2025-09-10', contact_number: '+91 76543 21098', safety_score: 92, status: 'Off Duty' },
+  { id: 'mock-d4', name: 'Suresh Sharma', license_number: 'MH-1220100067890', license_category: 'Commercial Heavy', license_expiry_date: '2024-03-12', contact_number: '+91 65432 10987', safety_score: 65, status: 'Suspended' }
+];
 
 export default function MainDashboard({ token }) {
   const [stats, setStats] = useState({
@@ -22,6 +37,7 @@ export default function MainDashboard({ token }) {
     totalCosts: 0
   });
   const [loading, setLoading] = useState(true);
+  const [isOffline, setIsOffline] = useState(false);
 
   useEffect(() => {
     // Fetch stats
@@ -41,24 +57,53 @@ export default function MainDashboard({ token }) {
         if (token === 'demo-token') {
           // Demo/offline mode
           const storedV = localStorage.getItem('transitops_mock_vehicles');
-          vehicles = storedV ? JSON.parse(storedV) : [];
+          vehicles = storedV ? JSON.parse(storedV) : mockVehicles;
+          if (!storedV) localStorage.setItem('transitops_mock_vehicles', JSON.stringify(mockVehicles));
+
           const storedD = localStorage.getItem('transitops_mock_drivers');
-          drivers = storedD ? JSON.parse(storedD) : [];
+          drivers = storedD ? JSON.parse(storedD) : mockDrivers;
+          if (!storedD) localStorage.setItem('transitops_mock_drivers', JSON.stringify(mockDrivers));
+
+          kpis = {
+            active_vehicles: vehicles.filter(v => v.status === 'On Trip').length,
+            vehicles_in_maintenance: vehicles.filter(v => v.status === 'In Shop').length,
+            active_trips: vehicles.filter(v => v.status === 'On Trip').length,
+            fleet_utilization_percent: vehicles.length > 0 ? Math.round((vehicles.filter(v => v.status === 'On Trip').length / vehicles.length) * 100) : 0,
+            total_operational_costs: 45000
+          };
+          setIsOffline(true);
         } else {
           // Try to fetch from backend API
-          const headers = { 'Authorization': `Bearer ${token}` };
-          const [resV, resD, resKPI] = await Promise.all([
-            fetch(`${API_BASE_URL}/vehicles`, { headers }),
-            fetch(`${API_BASE_URL}/drivers`, { headers }),
-            fetch(`${API_BASE_URL}/dashboard/kpis`, { headers })
-          ]);
-          
-          if (resV.ok && resD.ok && resKPI.ok) {
-            vehicles = await resV.json();
-            drivers = await resD.json();
-            kpis = await resKPI.json();
-          } else {
-            console.warn("One or more API requests failed");
+          try {
+            const headers = { 'Authorization': `Bearer ${token}` };
+            const [resV, resD, resKPI] = await Promise.all([
+              fetch(`${API_BASE_URL}/vehicles`, { headers }),
+              fetch(`${API_BASE_URL}/drivers`, { headers }),
+              fetch(`${API_BASE_URL}/dashboard/kpis`, { headers })
+            ]);
+            
+            if (resV.ok && resD.ok && resKPI.ok) {
+              vehicles = await resV.json();
+              drivers = await resD.json();
+              kpis = await resKPI.json();
+              setIsOffline(false);
+            } else {
+              throw new Error("One or more APIs responded with an error");
+            }
+          } catch (apiErr) {
+            console.warn("Backend API failed. Falling back to local storage / mock data in dashboard.");
+            const storedV = localStorage.getItem('transitops_mock_vehicles');
+            vehicles = storedV ? JSON.parse(storedV) : mockVehicles;
+            const storedD = localStorage.getItem('transitops_mock_drivers');
+            drivers = storedD ? JSON.parse(storedD) : mockDrivers;
+            kpis = {
+              active_vehicles: vehicles.filter(v => v.status === 'On Trip').length,
+              vehicles_in_maintenance: vehicles.filter(v => v.status === 'In Shop').length,
+              active_trips: vehicles.filter(v => v.status === 'On Trip').length,
+              fleet_utilization_percent: vehicles.length > 0 ? Math.round((vehicles.filter(v => v.status === 'On Trip').length / vehicles.length) * 100) : 0,
+              total_operational_costs: 45000
+            };
+            setIsOffline(true);
           }
         }
 
@@ -140,6 +185,13 @@ export default function MainDashboard({ token }) {
         <h1 className="mobile-title text-3xl font-bold tracking-tight text-[var(--color-text-main)]">Fleet Command Center</h1>
         <p className="text-[var(--color-text-muted)] mt-1">Real-time status overview of TransitOps operations.</p>
       </div>
+
+      {isOffline && (
+        <div className="bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-[6px] mb-6 text-sm flex items-center gap-2 font-medium">
+          <AlertCircle className="w-5 h-5 flex-shrink-0 text-amber-600" />
+          <span>Running in <strong>Demo/Offline Mode</strong>. Records are saved locally in your browser.</span>
+        </div>
+      )}
 
       {/* Grid of Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
