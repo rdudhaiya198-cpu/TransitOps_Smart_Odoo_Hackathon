@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import LandingPage from './components/LandingPage';
 import Login from './components/Login';
 import Sidebar from './components/Sidebar';
 import MainDashboard from './components/MainDashboard';
@@ -9,6 +10,7 @@ function App() {
   const [token, setToken] = useState(localStorage.getItem('transitops_token') || null);
   const [user, setUser] = useState(null);
   const [currentView, setCurrentView] = useState('dashboard');
+  const [showLanding, setShowLanding] = useState(!localStorage.getItem('transitops_token'));
   const [darkMode, setDarkMode] = useState(
     localStorage.getItem('transitops_dark') === 'true' || false
   );
@@ -45,6 +47,7 @@ function App() {
     localStorage.removeItem('transitops_user');
     setToken(null);
     setUser(null);
+    setShowLanding(true); // Return to landing page on logout
   };
 
   // View Router Render Helper
@@ -61,7 +64,12 @@ function App() {
     }
   };
 
-  // Authenticate wrapper
+  // 1. Show Landing Page if active
+  if (showLanding) {
+    return <LandingPage onLaunchConsole={() => setShowLanding(false)} />;
+  }
+
+  // 2. Show Authenticate wrapper if no session
   if (!token) {
     return <Login onLoginSuccess={handleLoginSuccess} />;
   }
