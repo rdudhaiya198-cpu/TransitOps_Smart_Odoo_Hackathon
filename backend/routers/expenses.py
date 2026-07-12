@@ -40,7 +40,7 @@ def get_expenses(
     res = query.execute()
     return res.data
 
-@router.post("/", response_model=ExpenseResponse, status_code=status.HTTP_211_CREATED)
+@router.post("/", response_model=ExpenseResponse, status_code=status.HTTP_201_CREATED)
 def record_expense(
     expense: ExpenseCreate,
     supabase: Client = Depends(get_supabase),

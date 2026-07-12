@@ -30,7 +30,7 @@ def get_maintenance_logs(
     res = query.execute()
     return res.data
 
-@router.post("/maintenance", response_model=MaintenanceLogResponse, status_code=status.HTTP_211_CREATED)
+@router.post("/maintenance", response_model=MaintenanceLogResponse, status_code=status.HTTP_201_CREATED)
 def log_maintenance(
     log: MaintenanceLogCreate,
     supabase: Client = Depends(get_supabase),
@@ -112,7 +112,7 @@ def get_fuel_logs(
     res = query.execute()
     return res.data
 
-@router.post("/fuel-logs", response_model=FuelLogResponse, status_code=status.HTTP_211_CREATED)
+@router.post("/fuel-logs", response_model=FuelLogResponse, status_code=status.HTTP_201_CREATED)
 def record_fuel_log(
     fuel: FuelLogCreate,
     supabase: Client = Depends(get_supabase),

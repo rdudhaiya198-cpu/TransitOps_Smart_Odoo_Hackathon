@@ -34,7 +34,7 @@ def get_trips(
     res = query.execute()
     return res.data
 
-@router.post("/", response_model=TripResponse, status_code=status.HTTP_211_CREATED)
+@router.post("/", response_model=TripResponse, status_code=status.HTTP_201_CREATED)
 def create_trip(
     trip: TripCreate,
     supabase: Client = Depends(get_supabase),
