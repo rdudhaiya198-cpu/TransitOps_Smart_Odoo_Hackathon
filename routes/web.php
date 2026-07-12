@@ -67,3 +67,5 @@ $router->post('/login', function () {
 
 $router->view('/dashboard', 'dashboard.index')->name('dashboard');
 $router->view('/vehicles', 'vehicles.index')->name('vehicles.index');
+$router->view('/drivers', 'drivers.index')->name('drivers.index');
+$router->view('/trips', 'trips.index')->name('trips.index');
