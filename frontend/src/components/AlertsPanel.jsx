@@ -64,7 +64,7 @@ export default function AlertsPanel({ token }) {
   };
 
   return (
-    <div className="bg-white border border-[var(--color-border)] rounded-[6px] p-5 shadow-sm flex flex-col h-full">
+    <div className="app-panel bg-white border border-[var(--color-border)] rounded-[6px] p-5 shadow-sm flex flex-col h-full">
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-bold text-lg flex items-center gap-2 text-[var(--color-text-main)]">
           <AlertCircle className="w-5 h-5 text-gray-500" />

@@ -123,11 +123,11 @@ export default function TripDashboard({ token }) {
   const availableDrivers = drivers.filter(d => d.status === 'Available');
 
   return (
-    <div className="flex-1 flex flex-col min-h-0 bg-[var(--color-surface)] p-4 md:p-8">
+    <div className="app-shell flex-1 flex flex-col min-h-0 p-4 sm:p-6 lg:p-8">
       {/* Header & Actions */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-[var(--color-text-main)]">Trip Management</h1>
+          <h1 className="mobile-title text-3xl font-bold tracking-tight text-[var(--color-text-main)]">Trip Management</h1>
           <p className="text-[var(--color-text-muted)] mt-1">Schedule, dispatch, and monitor trips.</p>
         </div>
         <button
@@ -144,9 +144,9 @@ export default function TripDashboard({ token }) {
       {/* Kanban Board */}
       {!loading && (
         <div className="flex-1 overflow-x-auto">
-          <div className="flex gap-6 h-full min-w-max pb-4">
+          <div className="flex gap-4 sm:gap-6 h-full min-w-max pb-4">
             {Object.entries(columns).map(([status, statusTrips]) => (
-              <div key={status} className="w-80 flex flex-col bg-slate-50/50 rounded-[6px] border border-[var(--color-border)] flex-shrink-0 max-h-full">
+              <div key={status} className="w-[min(20rem,calc(100vw-2rem))] sm:w-80 flex flex-col bg-slate-50/50 rounded-[6px] border border-[var(--color-border)] flex-shrink-0 max-h-full">
                 {/* Column Header */}
                 <div className="p-4 border-b border-[var(--color-border)] flex justify-between items-center bg-white rounded-t-[6px]">
                   <h3 className="font-bold text-[var(--color-text-main)] flex items-center gap-2">
@@ -231,7 +231,7 @@ export default function TripDashboard({ token }) {
       {/* Create Trip Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
-          <div className="bg-white w-full max-w-lg rounded-[6px] shadow-sm overflow-hidden border border-[var(--color-border)]">
+          <div className="app-modal app-panel bg-white w-full max-w-lg rounded-[6px] shadow-sm overflow-hidden border border-[var(--color-border)]">
             <div className="flex justify-between items-center p-5 border-b border-[var(--color-border)]">
               <h2 className="text-lg font-bold text-[var(--color-text-main)]">Schedule New Trip</h2>
               <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-gray-600">
@@ -243,7 +243,7 @@ export default function TripDashboard({ token }) {
               {error && <div className="mb-4 p-3 bg-red-50 text-red-600 rounded-lg text-sm">{error}</div>}
               
               <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-bold text-[var(--color-text-muted)] uppercase tracking-wider mb-1.5">Vehicle</label>
                     <select 
@@ -251,7 +251,7 @@ export default function TripDashboard({ token }) {
                       value={formData.vehicle_id} 
                       onChange={handleInputChange} 
                       required
-                      className="w-full bg-white border border-[var(--color-border)] rounded-[6px] px-3 py-2 text-sm text-[var(--color-text-main)] focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
+                      className="app-field w-full bg-white border border-[var(--color-border)] rounded-[6px] px-3 py-2 text-sm text-[var(--color-text-main)] focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
                     >
                       <option value="">Select Vehicle</option>
                       {availableVehicles.map(v => (
@@ -266,7 +266,7 @@ export default function TripDashboard({ token }) {
                       value={formData.driver_id} 
                       onChange={handleInputChange} 
                       required
-                      className="w-full bg-white border border-[var(--color-border)] rounded-[6px] px-3 py-2 text-sm text-[var(--color-text-main)] focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
+                      className="app-field w-full bg-white border border-[var(--color-border)] rounded-[6px] px-3 py-2 text-sm text-[var(--color-text-main)] focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
                     >
                       <option value="">Select Driver</option>
                       {availableDrivers.map(d => (
@@ -284,12 +284,12 @@ export default function TripDashboard({ token }) {
                     value={formData.cargo_weight} 
                     onChange={handleInputChange} 
                     required min="0" step="0.1"
-                    className="w-full bg-white border border-[var(--color-border)] rounded-[6px] px-3 py-2 text-sm text-[var(--color-text-main)] focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
+                    className="app-field w-full bg-white border border-[var(--color-border)] rounded-[6px] px-3 py-2 text-sm text-[var(--color-text-main)] focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
                     placeholder="Enter weight in kg"
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-bold text-[var(--color-text-muted)] uppercase tracking-wider mb-1.5">Start Location</label>
                     <input 
@@ -298,7 +298,7 @@ export default function TripDashboard({ token }) {
                       value={formData.start_location} 
                       onChange={handleInputChange} 
                       required
-                      className="w-full bg-white border border-[var(--color-border)] rounded-[6px] px-3 py-2 text-sm text-[var(--color-text-main)] focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
+                      className="app-field w-full bg-white border border-[var(--color-border)] rounded-[6px] px-3 py-2 text-sm text-[var(--color-text-main)] focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
                       placeholder="Origin"
                     />
                   </div>
@@ -310,14 +310,14 @@ export default function TripDashboard({ token }) {
                       value={formData.destination} 
                       onChange={handleInputChange} 
                       required
-                      className="w-full bg-white border border-[var(--color-border)] rounded-[6px] px-3 py-2 text-sm text-[var(--color-text-main)] focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
+                      className="app-field w-full bg-white border border-[var(--color-border)] rounded-[6px] px-3 py-2 text-sm text-[var(--color-text-main)] focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
                       placeholder="Destination"
                     />
                   </div>
                 </div>
               </div>
 
-              <div className="mt-8 flex justify-end gap-3 pt-4 border-t border-[var(--color-border)]">
+              <div className="mt-8 flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-4 border-t border-[var(--color-border)]">
                 <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 rounded-[6px] font-medium text-[var(--color-text-main)] bg-white border border-[var(--color-border)] hover:bg-gray-50 transition-colors">
                   Cancel
                 </button>

@@ -72,14 +72,14 @@ export default function Login({ onLoginSuccess }) {
   return (
     <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden bg-[var(--color-surface)]">
       <div className="w-full max-w-md z-10">
-        <div className="bg-white border border-[var(--color-border)] p-8 rounded-[6px] shadow-sm transition-all duration-300">
+        <div className="app-panel bg-white border border-[var(--color-border)] p-8 rounded-[6px] shadow-sm transition-all duration-300">
           
           {/* Logo / Header */}
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center p-3 bg-[var(--color-primary)] rounded-[6px] mb-4">
               <Shield className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-3xl font-bold tracking-tight text-[var(--color-text-main)]">
+            <h1 className="mobile-title text-3xl font-bold tracking-tight text-[var(--color-text-main)]">
               Transit<span className="text-[var(--color-secondary)]">Ops</span>
             </h1>
             <p className="text-[var(--color-text-muted)] mt-2 text-sm">Smart Transport Operations Platform</p>
@@ -119,7 +119,7 @@ export default function Login({ onLoginSuccess }) {
                   placeholder="name@company.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-white border border-[var(--color-border)] rounded-[6px] pl-10 pr-4 py-2.5 text-[var(--color-text-main)] placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] transition-all duration-200"
+                  className="app-field w-full bg-white border border-[var(--color-border)] rounded-[6px] pl-10 pr-4 py-2.5 text-[var(--color-text-main)] placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] transition-all duration-200"
                 />
               </div>
             </div>
@@ -136,7 +136,7 @@ export default function Login({ onLoginSuccess }) {
                   placeholder="********"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-white border border-[var(--color-border)] rounded-[6px] pl-10 pr-4 py-2.5 text-[var(--color-text-main)] placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] transition-all duration-200"
+                  className="app-field w-full bg-white border border-[var(--color-border)] rounded-[6px] pl-10 pr-4 py-2.5 text-[var(--color-text-main)] placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] transition-all duration-200"
                 />
               </div>
             </div>
@@ -151,7 +151,7 @@ export default function Login({ onLoginSuccess }) {
                   <select
                     value={role}
                     onChange={(e) => setRole(e.target.value)}
-                    className="w-full bg-white border border-[var(--color-border)] rounded-[6px] pl-10 pr-4 py-2.5 text-[var(--color-text-main)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] transition-all duration-200 appearance-none"
+                    className="app-field w-full bg-white border border-[var(--color-border)] rounded-[6px] pl-10 pr-4 py-2.5 text-[var(--color-text-main)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] transition-all duration-200 appearance-none"
                   >
                     <option value="Fleet Manager">Fleet Manager</option>
                     <option value="Driver">Driver</option>

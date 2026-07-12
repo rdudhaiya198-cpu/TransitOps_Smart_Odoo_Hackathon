@@ -20,25 +20,159 @@
   --color-text-muted: #6C757D;
 }
 
-/* Custom styles and overrides */
 @layer base {
+  :root {
+    color-scheme: light;
+    --app-bg: #F8F9FA;
+    --app-panel: #FFFFFF;
+    --app-panel-muted: #F1F3F5;
+    --app-border: #E0E0E0;
+    --app-text: #212529;
+    --app-muted: #6C757D;
+    --app-field: #FFFFFF;
+    --app-primary-soft: #F0E9EE;
+    --app-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+  }
+
   body {
-    background-color: var(--color-white, #FFFFFF);
-    color: var(--color-text-main, #212529);
+    background-color: var(--app-bg);
+    color: var(--app-text);
     transition-property: color, background-color;
     transition-duration: 200ms;
-    /* Inter is applied via Tailwind's default sans, but let's ensure it's standard */
     font-family: var(--font-sans);
+    --color-surface: var(--app-bg);
+    --color-border: var(--app-border);
+    --color-text-main: var(--app-text);
+    --color-text-muted: var(--app-muted);
+    --color-primary-light: var(--app-primary-soft);
   }
 
   body.dark {
-    /* For now keeping a dark mode stub, though Odoo is primarily light */
-    background-color: #3D2839;
-    color: #F8F9FA;
+    color-scheme: dark;
+    --app-bg: #141016;
+    --app-panel: #1D1720;
+    --app-panel-muted: #261E29;
+    --app-border: #3A303D;
+    --app-text: #F6F1F5;
+    --app-muted: #B9ADB8;
+    --app-field: #171219;
+    --app-primary-soft: #332433;
+    --app-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+    background-color: var(--app-bg);
+    color: var(--app-text);
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  input,
+  select,
+  textarea {
+    color-scheme: inherit;
   }
 }
 
-/* Custom Scrollbar */
+@layer components {
+  .app-shell {
+    background: var(--app-bg);
+    color: var(--app-text);
+  }
+
+  .app-panel {
+    background: var(--app-panel);
+    border-color: var(--app-border);
+    box-shadow: var(--app-shadow);
+  }
+
+  .app-field {
+    background: var(--app-field);
+    border-color: var(--app-border);
+    color: var(--app-text);
+  }
+
+  .app-field::placeholder {
+    color: color-mix(in srgb, var(--app-muted) 75%, transparent);
+  }
+
+  .app-muted-panel {
+    background: var(--app-panel-muted);
+    border-color: var(--app-border);
+  }
+
+  .app-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .app-table {
+    min-width: 760px;
+  }
+
+  .app-modal {
+    max-height: min(88vh, 760px);
+    overflow-y: auto;
+  }
+
+  .app-action-button {
+    min-height: 2.5rem;
+  }
+}
+
+@layer utilities {
+  .dark .bg-white {
+    background-color: var(--app-panel) !important;
+  }
+
+  .dark .bg-slate-50,
+  .dark .bg-gray-50,
+  .dark .hover\:bg-gray-50:hover,
+  .dark .hover\:bg-slate-50:hover {
+    background-color: var(--app-panel-muted) !important;
+  }
+
+  .dark .text-gray-400,
+  .dark .text-slate-400,
+  .dark .text-slate-500,
+  .dark .text-gray-500 {
+    color: var(--app-muted) !important;
+  }
+
+  .dark .border-gray-200,
+  .dark .border-slate-200 {
+    border-color: var(--app-border) !important;
+  }
+
+  .dark input,
+  .dark select,
+  .dark textarea {
+    background-color: var(--app-field) !important;
+    border-color: var(--app-border) !important;
+    color: var(--app-text) !important;
+  }
+
+  .dark option {
+    background-color: var(--app-field);
+    color: var(--app-text);
+  }
+
+  @media (max-width: 640px) {
+    .app-table {
+      min-width: 680px;
+    }
+
+    .mobile-tight {
+      padding: 1rem;
+    }
+
+    .mobile-title {
+      font-size: 1.625rem;
+      line-height: 2rem;
+    }
+  }
+}
+
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -49,12 +183,12 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #E0E0E0;
+  background: #C7C9CC;
   border-radius: 4px;
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  background: #714B67;
+  background: #5B4B5F;
 }
 
 ::-webkit-scrollbar-thumb:hover {

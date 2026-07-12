@@ -73,7 +73,7 @@ function App() {
   }
 
   return (
-    <div className={`flex flex-col lg:flex-row min-h-screen ${darkMode ? 'dark bg-[var(--color-primary-dark)] text-[var(--color-surface)]' : 'bg-[var(--color-surface)] text-[var(--color-text-main)]'}`}>
+    <div className={`app-shell flex flex-col lg:flex-row min-h-screen ${darkMode ? 'dark' : ''}`}>
       {/* Navigation Sidebar */}
       <Sidebar 
         currentView={currentView} 
@@ -85,7 +85,7 @@ function App() {
       />
 
       {/* Main Dashboard / Table Area */}
-      <main className={`flex-1 flex flex-col min-h-0 relative ${darkMode ? 'bg-black/20' : 'bg-white'}`}>
+      <main className="app-shell flex-1 flex flex-col min-h-0 relative">
         {renderView()}
       </main>
     </div>

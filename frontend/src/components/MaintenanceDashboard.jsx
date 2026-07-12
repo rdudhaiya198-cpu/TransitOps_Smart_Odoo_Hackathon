@@ -122,9 +122,9 @@ export default function MaintenanceDashboard({ token }) {
   };
 
   return (
-    <div className="flex-1 flex flex-col min-h-0 bg-[var(--color-surface)] p-4 md:p-8 overflow-auto">
+    <div className="app-shell flex-1 flex flex-col min-h-0 p-4 sm:p-6 lg:p-8 overflow-auto">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight text-[var(--color-text-main)]">Maintenance & Expenses</h1>
+        <h1 className="mobile-title text-3xl font-bold tracking-tight text-[var(--color-text-main)]">Maintenance & Expenses</h1>
         <p className="text-[var(--color-text-muted)] mt-1">Manage fleet maintenance and operational costs.</p>
       </div>
 
@@ -132,7 +132,7 @@ export default function MaintenanceDashboard({ token }) {
         
         {/* Left Col: Forms */}
         <div className="lg:col-span-1 space-y-6">
-          <div className="bg-white border border-[var(--color-border)] rounded-[6px] p-5 shadow-sm">
+          <div className="app-panel bg-white border border-[var(--color-border)] rounded-[6px] p-5 shadow-sm">
             <h2 className="text-lg font-bold mb-4 text-[var(--color-text-main)]">Log Activity</h2>
             
             <div className="flex gap-2 mb-6">
@@ -161,7 +161,7 @@ export default function MaintenanceDashboard({ token }) {
               
               <div>
                 <label className="block text-xs font-bold text-[var(--color-text-muted)] uppercase tracking-wider mb-1.5">Vehicle</label>
-                <select name="vehicle_id" value={formData.vehicle_id || ''} onChange={handleInputChange} required className="w-full bg-white border border-[var(--color-border)] rounded-[6px] px-3 py-2 text-sm text-[var(--color-text-main)] focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none">
+                <select name="vehicle_id" value={formData.vehicle_id || ''} onChange={handleInputChange} required className="app-field w-full bg-white border border-[var(--color-border)] rounded-[6px] px-3 py-2 text-sm text-[var(--color-text-main)] focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none">
                   <option value="">Select Vehicle</option>
                   {vehicles.map(v => <option key={v.id} value={v.id}>{v.registration_number}</option>)}
                 </select>
@@ -171,40 +171,40 @@ export default function MaintenanceDashboard({ token }) {
                 <>
                   <div>
                     <label className="block text-xs font-bold text-[var(--color-text-muted)] uppercase tracking-wider mb-1.5">Description</label>
-                    <input type="text" name="description" value={formData.description || ''} onChange={handleInputChange} required className="w-full bg-white border border-[var(--color-border)] rounded-[6px] px-3 py-2 text-sm text-[var(--color-text-main)] focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none" />
+                    <input type="text" name="description" value={formData.description || ''} onChange={handleInputChange} required className="app-field w-full bg-white border border-[var(--color-border)] rounded-[6px] px-3 py-2 text-sm text-[var(--color-text-main)] focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none" />
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-[var(--color-text-muted)] uppercase tracking-wider mb-1.5">Start Date</label>
-                    <input type="date" name="start_date" value={formData.start_date || ''} onChange={handleInputChange} className="w-full bg-white border border-[var(--color-border)] rounded-[6px] px-3 py-2 text-sm text-[var(--color-text-main)] focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none" />
+                    <input type="date" name="start_date" value={formData.start_date || ''} onChange={handleInputChange} className="app-field w-full bg-white border border-[var(--color-border)] rounded-[6px] px-3 py-2 text-sm text-[var(--color-text-main)] focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none" />
                   </div>
                 </>
               )}
 
               {activeTab === 'fuel' && (
                 <>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-[var(--color-text-muted)] uppercase tracking-wider mb-1.5">Liters</label>
-                      <input type="number" name="liters" value={formData.liters || ''} onChange={handleInputChange} required min="0" step="0.1" className="w-full bg-white border border-[var(--color-border)] rounded-[6px] px-3 py-2 text-sm text-[var(--color-text-main)] focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none" />
+                      <input type="number" name="liters" value={formData.liters || ''} onChange={handleInputChange} required min="0" step="0.1" className="app-field w-full bg-white border border-[var(--color-border)] rounded-[6px] px-3 py-2 text-sm text-[var(--color-text-main)] focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none" />
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-[var(--color-text-muted)] uppercase tracking-wider mb-1.5">Total Cost</label>
-                      <input type="number" name="cost" value={formData.cost || ''} onChange={handleInputChange} required min="0" step="0.01" className="w-full bg-white border border-[var(--color-border)] rounded-[6px] px-3 py-2 text-sm text-[var(--color-text-main)] focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none" />
+                      <input type="number" name="cost" value={formData.cost || ''} onChange={handleInputChange} required min="0" step="0.01" className="app-field w-full bg-white border border-[var(--color-border)] rounded-[6px] px-3 py-2 text-sm text-[var(--color-text-main)] focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none" />
                     </div>
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-[var(--color-text-muted)] uppercase tracking-wider mb-1.5">Date</label>
-                    <input type="date" name="date" value={formData.date || ''} onChange={handleInputChange} required className="w-full bg-white border border-[var(--color-border)] rounded-[6px] px-3 py-2 text-sm text-[var(--color-text-main)] focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none" />
+                    <input type="date" name="date" value={formData.date || ''} onChange={handleInputChange} required className="app-field w-full bg-white border border-[var(--color-border)] rounded-[6px] px-3 py-2 text-sm text-[var(--color-text-main)] focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none" />
                   </div>
                 </>
               )}
 
               {activeTab === 'expense' && (
                 <>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-[var(--color-text-muted)] uppercase tracking-wider mb-1.5">Category</label>
-                      <select name="category" value={formData.category || ''} onChange={handleInputChange} required className="w-full bg-white border border-[var(--color-border)] rounded-[6px] px-3 py-2 text-sm text-[var(--color-text-main)] focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none">
+                      <select name="category" value={formData.category || ''} onChange={handleInputChange} required className="app-field w-full bg-white border border-[var(--color-border)] rounded-[6px] px-3 py-2 text-sm text-[var(--color-text-main)] focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none">
                         <option value="">Select</option>
                         <option value="Fuel">Fuel</option>
                         <option value="Maintenance">Maintenance</option>
@@ -215,16 +215,16 @@ export default function MaintenanceDashboard({ token }) {
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-[var(--color-text-muted)] uppercase tracking-wider mb-1.5">Amount</label>
-                      <input type="number" name="amount" value={formData.amount || ''} onChange={handleInputChange} required min="0" step="0.01" className="w-full bg-white border border-[var(--color-border)] rounded-[6px] px-3 py-2 text-sm text-[var(--color-text-main)] focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none" />
+                      <input type="number" name="amount" value={formData.amount || ''} onChange={handleInputChange} required min="0" step="0.01" className="app-field w-full bg-white border border-[var(--color-border)] rounded-[6px] px-3 py-2 text-sm text-[var(--color-text-main)] focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none" />
                     </div>
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-[var(--color-text-muted)] uppercase tracking-wider mb-1.5">Date</label>
-                    <input type="date" name="date" value={formData.date || ''} onChange={handleInputChange} required className="w-full bg-white border border-[var(--color-border)] rounded-[6px] px-3 py-2 text-sm text-[var(--color-text-main)] focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none" />
+                    <input type="date" name="date" value={formData.date || ''} onChange={handleInputChange} required className="app-field w-full bg-white border border-[var(--color-border)] rounded-[6px] px-3 py-2 text-sm text-[var(--color-text-main)] focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none" />
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-[var(--color-text-muted)] uppercase tracking-wider mb-1.5">Description</label>
-                    <input type="text" name="description" value={formData.description || ''} onChange={handleInputChange} className="w-full bg-white border border-[var(--color-border)] rounded-[6px] px-3 py-2 text-sm text-[var(--color-text-main)] focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none" />
+                    <input type="text" name="description" value={formData.description || ''} onChange={handleInputChange} className="app-field w-full bg-white border border-[var(--color-border)] rounded-[6px] px-3 py-2 text-sm text-[var(--color-text-main)] focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none" />
                   </div>
                 </>
               )}
@@ -240,12 +240,12 @@ export default function MaintenanceDashboard({ token }) {
         <div className="lg:col-span-2 space-y-6">
           
           {/* Maintenance Logs */}
-          <div className="bg-white border border-[var(--color-border)] rounded-[6px] shadow-sm overflow-hidden flex flex-col max-h-[500px]">
+          <div className="app-panel bg-white border border-[var(--color-border)] rounded-[6px] shadow-sm overflow-hidden flex flex-col max-h-[500px]">
             <div className="p-5 border-b border-[var(--color-border)] bg-white">
               <h2 className="text-lg font-bold flex items-center gap-2 text-[var(--color-text-main)]"><Wrench className="w-5 h-5 text-gray-500"/> Maintenance Logs</h2>
             </div>
             <div className="flex-1 overflow-auto">
-              <table className="w-full text-left text-sm">
+              <table className="app-table w-full text-left text-sm">
                 <thead className="bg-[var(--color-surface)] text-[var(--color-text-muted)] sticky top-0">
                   <tr>
                     <th className="px-5 py-3 font-semibold uppercase text-xs">Vehicle</th>
@@ -287,12 +287,12 @@ export default function MaintenanceDashboard({ token }) {
           </div>
 
           {/* Expenses & Fuel Logs */}
-          <div className="bg-white border border-[var(--color-border)] rounded-[6px] shadow-sm overflow-hidden flex flex-col max-h-[400px]">
+          <div className="app-panel bg-white border border-[var(--color-border)] rounded-[6px] shadow-sm overflow-hidden flex flex-col max-h-[400px]">
             <div className="p-5 border-b border-[var(--color-border)] bg-white">
               <h2 className="text-lg font-bold flex items-center gap-2 text-[var(--color-text-main)]"><DollarSign className="w-5 h-5 text-gray-500"/> Recent Expenses</h2>
             </div>
             <div className="flex-1 overflow-auto">
-              <table className="w-full text-left text-sm">
+              <table className="app-table w-full text-left text-sm">
                 <thead className="bg-[var(--color-surface)] text-[var(--color-text-muted)] sticky top-0">
                   <tr>
                     <th className="px-5 py-3 font-semibold uppercase text-xs">Date</th>
@@ -330,7 +330,7 @@ export default function MaintenanceDashboard({ token }) {
       {/* Close Maintenance Modal */}
       {closeModalData && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
-          <div className="bg-white w-full max-w-sm rounded-[6px] shadow-sm border border-[var(--color-border)] overflow-hidden">
+          <div className="app-modal app-panel bg-white w-full max-w-sm rounded-[6px] shadow-sm border border-[var(--color-border)] overflow-hidden">
             <div className="p-5 border-b border-[var(--color-border)] bg-white">
               <h2 className="text-lg font-bold flex items-center gap-2 text-[var(--color-text-main)]"><CheckCircle className="w-5 h-5 text-gray-500"/> Close Maintenance</h2>
             </div>
@@ -338,14 +338,14 @@ export default function MaintenanceDashboard({ token }) {
               <div className="space-y-4">
                 <div>
                   <label className="block text-xs font-bold text-[var(--color-text-muted)] uppercase tracking-wider mb-1.5">Final Cost</label>
-                  <input type="number" value={closeModalData.cost || ''} onChange={(e) => setCloseModalData({...closeModalData, cost: e.target.value})} required min="0" step="0.01" className="w-full bg-white border border-[var(--color-border)] rounded-[6px] px-3 py-2 text-sm text-[var(--color-text-main)] focus:ring-1 focus:ring-[var(--color-primary)] outline-none" />
+                  <input type="number" value={closeModalData.cost || ''} onChange={(e) => setCloseModalData({...closeModalData, cost: e.target.value})} required min="0" step="0.01" className="app-field w-full bg-white border border-[var(--color-border)] rounded-[6px] px-3 py-2 text-sm text-[var(--color-text-main)] focus:ring-1 focus:ring-[var(--color-primary)] outline-none" />
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-[var(--color-text-muted)] uppercase tracking-wider mb-1.5">Completion Date</label>
-                  <input type="date" value={closeModalData.end_date || ''} onChange={(e) => setCloseModalData({...closeModalData, end_date: e.target.value})} required className="w-full bg-white border border-[var(--color-border)] rounded-[6px] px-3 py-2 text-sm text-[var(--color-text-main)] focus:ring-1 focus:ring-[var(--color-primary)] outline-none" />
+                  <input type="date" value={closeModalData.end_date || ''} onChange={(e) => setCloseModalData({...closeModalData, end_date: e.target.value})} required className="app-field w-full bg-white border border-[var(--color-border)] rounded-[6px] px-3 py-2 text-sm text-[var(--color-text-main)] focus:ring-1 focus:ring-[var(--color-primary)] outline-none" />
                 </div>
               </div>
-              <div className="mt-8 flex justify-end gap-3 pt-4 border-t border-[var(--color-border)]">
+              <div className="mt-8 flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-4 border-t border-[var(--color-border)]">
                 <button type="button" onClick={() => setCloseModalData(null)} className="px-4 py-2 rounded-[6px] font-medium text-[var(--color-text-main)] bg-white border border-[var(--color-border)] hover:bg-gray-50">Cancel</button>
                 <button type="submit" className="px-4 py-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] text-white font-medium rounded-[6px]">Complete</button>
               </div>

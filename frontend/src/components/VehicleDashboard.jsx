@@ -334,11 +334,11 @@ export default function VehicleDashboard({ token }) {
   );
 
   return (
-    <div className="flex-1 overflow-auto p-4 md:p-8">
+    <div className="flex-1 overflow-auto p-4 sm:p-6 lg:p-8">
       {/* Header section */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-[var(--color-text-main)]">Vehicles Registry</h1>
+          <h1 className="mobile-title text-3xl font-bold tracking-tight text-[var(--color-text-main)]">Vehicles Registry</h1>
           <p className="text-[var(--color-text-muted)] mt-1">Manage and track fleet transport vehicles.</p>
         </div>
         <button
@@ -363,7 +363,7 @@ export default function VehicleDashboard({ token }) {
       )}
 
       {/* Toolbar / Search Filters */}
-      <div className="bg-white border border-[var(--color-border)] rounded-[6px] p-4 mb-6 shadow-sm flex flex-col md:flex-row gap-4">
+      <div className="app-panel bg-white border border-[var(--color-border)] rounded-[6px] p-4 mb-6 shadow-sm flex flex-col md:flex-row gap-4">
         <div className="flex-1 relative">
           <Search className="absolute inset-y-0 left-3 my-auto w-5 h-5 text-gray-400" />
           <input
@@ -371,14 +371,14 @@ export default function VehicleDashboard({ token }) {
             placeholder="Search by model, registration, or type..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-white border border-[var(--color-border)] pl-10 pr-4 py-2 rounded-[6px] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] text-[var(--color-text-main)]"
+            className="app-field w-full bg-white border border-[var(--color-border)] pl-10 pr-4 py-2 rounded-[6px] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] text-[var(--color-text-main)]"
           />
         </div>
         <div className="w-full md:w-48">
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="w-full bg-white border border-[var(--color-border)] px-4 py-2 rounded-[6px] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] text-[var(--color-text-main)] appearance-none cursor-pointer"
+            className="app-field w-full bg-white border border-[var(--color-border)] px-4 py-2 rounded-[6px] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] text-[var(--color-text-main)] appearance-none cursor-pointer"
           >
             <option value="">All Statuses</option>
             <option value="Available">Available</option>
@@ -390,7 +390,7 @@ export default function VehicleDashboard({ token }) {
       </div>
 
       {/* Table Content */}
-      <div className="bg-white border border-[var(--color-border)] rounded-[6px] overflow-hidden shadow-sm">
+      <div className="app-panel bg-white border border-[var(--color-border)] rounded-[6px] overflow-hidden shadow-sm">
         {loading ? (
           <div className="flex flex-col items-center justify-center p-16 gap-3">
             <Loader2 className="w-8 h-8 text-[var(--color-primary)] animate-spin" />
@@ -405,8 +405,8 @@ export default function VehicleDashboard({ token }) {
             <p className="text-[var(--color-text-muted)] mt-1 max-w-sm">No vehicles match your search query. Add a new one to get started.</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+          <div className="app-table-wrap overflow-x-auto">
+            <table className="app-table w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-muted)] text-xs font-bold uppercase tracking-wider">
                   <th className="py-3 px-6">Vehicle Info</th>
@@ -475,13 +475,13 @@ export default function VehicleDashboard({ token }) {
       {/* Add/Edit Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-          <div className="w-full max-w-lg bg-white border border-[var(--color-border)] rounded-[6px] shadow-sm overflow-hidden">
+          <div className="app-modal app-panel w-full max-w-lg bg-white border border-[var(--color-border)] rounded-[6px] shadow-sm overflow-hidden">
             <div className="p-5 border-b border-[var(--color-border)] flex items-center justify-between">
               <h2 className="text-lg font-bold text-[var(--color-text-main)]">{editId ? 'Edit Vehicle' : 'Add New Vehicle'}</h2>
               <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-gray-600 font-bold">Close</button>
             </div>
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="col-span-2">
                   <label className="block text-xs font-bold text-slate-500 mb-1.5 uppercase">Model Name</label>
                   <input
@@ -491,7 +491,7 @@ export default function VehicleDashboard({ token }) {
                     placeholder="e.g. Tata Prima 4025.S"
                     value={form.name_model}
                     onChange={handleChange}
-                    className="w-full bg-white border border-[var(--color-border)] px-3 py-2 rounded-[6px] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] text-sm text-[var(--color-text-main)]"
+                    className="app-field w-full bg-white border border-[var(--color-border)] px-3 py-2 rounded-[6px] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] text-sm text-[var(--color-text-main)]"
                   />
                 </div>
                 <div>
@@ -503,7 +503,7 @@ export default function VehicleDashboard({ token }) {
                     placeholder="e.g. MH-12-PQ-9876"
                     value={form.registration_number}
                     onChange={handleChange}
-                    className="w-full bg-white border border-[var(--color-border)] px-3 py-2 rounded-[6px] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] text-sm text-[var(--color-text-main)]"
+                    className="app-field w-full bg-white border border-[var(--color-border)] px-3 py-2 rounded-[6px] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] text-sm text-[var(--color-text-main)]"
                   />
                 </div>
                 <div>
@@ -512,7 +512,7 @@ export default function VehicleDashboard({ token }) {
                     name="type"
                     value={form.type}
                     onChange={handleChange}
-                    className="w-full bg-white border border-[var(--color-border)] px-3 py-2 rounded-[6px] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] text-sm text-[var(--color-text-main)]"
+                    className="app-field w-full bg-white border border-[var(--color-border)] px-3 py-2 rounded-[6px] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] text-sm text-[var(--color-text-main)]"
                   >
                     <option value="Light Truck">Light Truck</option>
                     <option value="Medium Truck">Medium Truck</option>
@@ -532,7 +532,7 @@ export default function VehicleDashboard({ token }) {
                       placeholder="e.g. 24000"
                       value={form.max_load_capacity}
                       onChange={handleChange}
-                      className="w-full bg-white border border-[var(--color-border)] pl-3 pr-10 py-2 rounded-[6px] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] text-sm text-[var(--color-text-main)]"
+                      className="app-field w-full bg-white border border-[var(--color-border)] pl-3 pr-10 py-2 rounded-[6px] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] text-sm text-[var(--color-text-main)]"
                     />
                     <Weight className="absolute right-3.5 inset-y-0 my-auto w-4 h-4 text-slate-400" />
                   </div>
@@ -548,7 +548,7 @@ export default function VehicleDashboard({ token }) {
                       placeholder="e.g. 45000"
                       value={form.odometer}
                       onChange={handleChange}
-                      className="w-full bg-white border border-[var(--color-border)] pl-3 pr-10 py-2 rounded-[6px] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] text-sm text-[var(--color-text-main)]"
+                      className="app-field w-full bg-white border border-[var(--color-border)] pl-3 pr-10 py-2 rounded-[6px] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] text-sm text-[var(--color-text-main)]"
                     />
                     <Gauge className="absolute right-3.5 inset-y-0 my-auto w-4 h-4 text-slate-400" />
                   </div>
@@ -564,7 +564,7 @@ export default function VehicleDashboard({ token }) {
                       placeholder="e.g. 2500000"
                       value={form.acquisition_cost}
                       onChange={handleChange}
-                      className="w-full bg-white border border-[var(--color-border)] pl-8 pr-3 py-2 rounded-[6px] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] text-sm text-[var(--color-text-main)]"
+                      className="app-field w-full bg-white border border-[var(--color-border)] pl-8 pr-3 py-2 rounded-[6px] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] text-sm text-[var(--color-text-main)]"
                     />
                     <span className="absolute left-3.5 inset-y-0 my-auto h-fit text-sm text-slate-400 font-bold">Rs.</span>
                   </div>
@@ -575,7 +575,7 @@ export default function VehicleDashboard({ token }) {
                     name="status"
                     value={form.status}
                     onChange={handleChange}
-                    className="w-full bg-white border border-[var(--color-border)] px-3 py-2 rounded-[6px] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] text-sm text-[var(--color-text-main)]"
+                    className="app-field w-full bg-white border border-[var(--color-border)] px-3 py-2 rounded-[6px] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] text-sm text-[var(--color-text-main)]"
                   >
                     <option value="Available">Available</option>
                     <option value="On Trip">On Trip</option>
@@ -584,7 +584,7 @@ export default function VehicleDashboard({ token }) {
                   </select>
                 </div>
               </div>
-              <div className="flex justify-end gap-3 pt-4 border-t border-[var(--color-border)]">
+              <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-4 border-t border-[var(--color-border)]">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
@@ -607,7 +607,7 @@ export default function VehicleDashboard({ token }) {
       {/* Document Management Modal */}
       {isDocModalOpen && activeDocVehicle && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-          <div className="w-full max-w-md bg-white border border-[var(--color-border)] rounded-[6px] shadow-sm overflow-hidden">
+          <div className="app-modal app-panel w-full max-w-md bg-white border border-[var(--color-border)] rounded-[6px] shadow-sm overflow-hidden">
             <div className="p-5 border-b border-[var(--color-border)] flex items-center justify-between">
               <div>
                 <h2 className="text-lg font-bold text-[var(--color-text-main)]">Documents Manager</h2>
@@ -626,7 +626,7 @@ export default function VehicleDashboard({ token }) {
                     name="docName"
                     required
                     placeholder="e.g. Pollution Certificate, Insurance"
-                    className="flex-1 bg-white border border-[var(--color-border)] px-3 py-2 rounded-[6px] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] text-[var(--color-text-main)] text-sm"
+                    className="app-field flex-1 bg-white border border-[var(--color-border)] px-3 py-2 rounded-[6px] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] text-[var(--color-text-main)] text-sm"
                   />
                   <button
                     type="submit"

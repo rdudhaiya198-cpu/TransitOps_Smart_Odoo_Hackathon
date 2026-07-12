@@ -134,10 +134,10 @@ export default function MainDashboard({ token }) {
   ];
 
   return (
-    <div className="flex-1 overflow-auto p-4 md:p-8">
+    <div className="flex-1 overflow-auto p-4 sm:p-6 lg:p-8">
       {/* Welcome Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight text-[var(--color-text-main)]">Fleet Command Center</h1>
+        <h1 className="mobile-title text-3xl font-bold tracking-tight text-[var(--color-text-main)]">Fleet Command Center</h1>
         <p className="text-[var(--color-text-muted)] mt-1">Real-time status overview of TransitOps operations.</p>
       </div>
 
@@ -148,7 +148,7 @@ export default function MainDashboard({ token }) {
           return (
             <div 
               key={idx} 
-              className={`bg-white border border-[var(--color-border)] rounded-[6px] p-6 shadow-sm hover:shadow-md transition-all duration-200 relative overflow-hidden`}
+              className={`app-panel bg-white border border-[var(--color-border)] rounded-[6px] p-5 sm:p-6 shadow-sm hover:shadow-md transition-all duration-200 relative overflow-hidden`}
             >
               <div className="flex items-center justify-between mb-4">
                 <span className="text-xs font-bold text-[var(--color-text-muted)] uppercase tracking-wider">{card.title}</span>
@@ -158,7 +158,7 @@ export default function MainDashboard({ token }) {
               </div>
               
               <div className="space-y-1">
-                <span className="text-3xl font-bold tracking-tight text-[var(--color-text-main)]">{loading ? '...' : card.value}</span>
+                <span className="mobile-title text-3xl font-bold tracking-tight text-[var(--color-text-main)]">{loading ? '...' : card.value}</span>
                 <p className="text-xs text-[var(--color-text-muted)] font-medium">{card.description}</p>
               </div>
             </div>
@@ -169,17 +169,17 @@ export default function MainDashboard({ token }) {
       {/* Operational Highlights */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Operations Chart (Recharts) */}
-        <div className="bg-white border border-[var(--color-border)] rounded-[6px] p-6 shadow-sm lg:col-span-2">
+        <div className="app-panel bg-white border border-[var(--color-border)] rounded-[6px] p-6 shadow-sm lg:col-span-2">
           <h3 className="font-bold text-lg mb-4 text-[var(--color-text-main)]">Weekly Operational Costs (Simulated)</h3>
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={costData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E0E0E0" />
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6C757D' }} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6C757D' }} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-border)" />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--color-text-muted)' }} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--color-text-muted)' }} />
                 <Tooltip 
                   cursor={{ fill: 'var(--color-surface)' }}
-                  contentStyle={{ borderRadius: '6px', border: '1px solid var(--color-border)', boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}
+                  contentStyle={{ borderRadius: '6px', border: '1px solid var(--color-border)', background: 'var(--app-panel)', color: 'var(--color-text-main)', boxShadow: 'var(--app-shadow)' }}
                 />
                 <Bar dataKey="cost" fill="#714B67" radius={[2, 2, 0, 0]} />
               </BarChart>
@@ -188,7 +188,7 @@ export default function MainDashboard({ token }) {
         </div>
 
         {/* Live Safety Summary Card */}
-        <div className="bg-white border border-[var(--color-border)] rounded-[6px] p-6 shadow-sm flex flex-col justify-between">
+        <div className="app-panel bg-white border border-[var(--color-border)] rounded-[6px] p-6 shadow-sm flex flex-col justify-between">
           <div>
             <h3 className="font-bold text-lg mb-1.5 text-[var(--color-text-main)]">Safety Command Overview</h3>
             <p className="text-xs text-[var(--color-text-muted)]">Compliance & Driving Auditing score summaries.</p>
