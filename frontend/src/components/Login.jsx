@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { API_BASE_URL } from '../config';
 import { Lock, Mail, UserPlus, LogIn, ArrowRight, Shield } from 'lucide-react';
 
@@ -98,7 +98,7 @@ export default function Login({ onLoginSuccess }) {
                   onClick={handleDemoMode}
                   className="text-left font-bold underline mt-1 text-purple-400 hover:text-purple-300 transition-colors"
                 >
-                  🚀 Click here to run in Demo/Offline Mode (No Backend required)
+                  Enter Demo/Offline Mode (No backend required)
                 </button>
               )}
             </div>
@@ -137,7 +137,7 @@ export default function Login({ onLoginSuccess }) {
                 <input
                   type="password"
                   required
-                  placeholder="••••••••"
+                  placeholder="********"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full bg-slate-900/60 border border-slate-700/80 rounded-xl pl-10 pr-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 transition-all duration-200"
@@ -205,7 +205,7 @@ export default function Login({ onLoginSuccess }) {
               onClick={handleDemoMode}
               className="w-full bg-slate-700/40 hover:bg-slate-700/70 border border-slate-600/40 text-slate-300 py-2.5 rounded-xl font-medium transition-all duration-200 flex items-center justify-center gap-2"
             >
-              ⚡ Enter Demo / Preview Mode
+              Enter Demo / Preview Mode
             </button>
           </div>
 

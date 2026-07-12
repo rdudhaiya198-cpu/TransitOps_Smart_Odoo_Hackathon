@@ -1,14 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { API_BASE_URL } from '../config';
 import { 
   Truck, 
   Users, 
-  Award, 
-  Clock, 
-  AlertTriangle, 
   Activity, 
   ShieldCheck, 
-  Wrench 
 } from 'lucide-react';
 
 export default function MainDashboard({ token }) {
@@ -20,7 +16,6 @@ export default function MainDashboard({ token }) {
     inShopVehicles: 0,
     availableDrivers: 0
   });
-  const [recentTrips, setRecentTrips] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -42,7 +37,7 @@ export default function MainDashboard({ token }) {
           const resV = await fetch(`${API_BASE_URL}/vehicles`, {
             headers: { 'Authorization': `Bearer ${token}` }
           });
-          const resD = await fetch(`${API_BASE_URL}/drivers/`, {
+          const resD = await fetch(`${API_BASE_URL}/drivers`, {
             headers: { 'Authorization': `Bearer ${token}` }
           });
           if (resV.ok && resD.ok) {
@@ -69,7 +64,7 @@ export default function MainDashboard({ token }) {
           inShopVehicles: inShopV,
           availableDrivers: availableD
         });
-      } catch (err) {
+      } catch {
         console.warn("Failed loading stats. Resetting to defaults.");
       } finally {
         setLoading(false);
@@ -142,7 +137,7 @@ export default function MainDashboard({ token }) {
               </div>
               
               <div className="space-y-1">
-                <span className="text-4xl font-extrabold tracking-tight">{card.value}</span>
+                <span className="text-4xl font-extrabold tracking-tight">{loading ? '...' : card.value}</span>
                 <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">{card.description}</p>
               </div>
             </div>
@@ -215,12 +210,12 @@ export default function MainDashboard({ token }) {
             </div>
           </div>
 
-          <div className="text-xs text-slate-400 text-center font-medium bg-slate-850 p-3 rounded-2xl border border-slate-800">
+          <div className="text-xs text-slate-400 text-center font-medium bg-slate-800 p-3 rounded-2xl border border-slate-800">
             {stats.avgSafetyScore >= 90 
-              ? "🟢 Excellent driving patterns detected across fleet operators." 
+              ? "Excellent driving patterns detected across fleet operators." 
               : stats.avgSafetyScore >= 75 
-              ? "🟡 Moderate safety compliance. Keep monitoring driver checklists."
-              : "🔴 Critical: Average safety rating below threshold. Perform reviews."
+              ? "Moderate safety compliance. Keep monitoring driver checklists."
+              : "Critical: Average safety rating below threshold. Perform reviews."
             }
           </div>
         </div>

@@ -7,7 +7,7 @@ app = FastAPI(title="TransitOps API", description="Smart Transport Operations Pl
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # In production, restrict to frontend URLs
+    allow_origins=["http://localhost:5173", "http://localhost:3000", "http://localhost:8000"], # In production, restrict to frontend URLs
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
