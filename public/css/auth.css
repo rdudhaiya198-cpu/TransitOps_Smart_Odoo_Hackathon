@@ -1,0 +1,370 @@
+:root {
+    --app-bg: #141414;
+    --app-card: #222428;
+    --app-border: #34373d;
+    --app-accent: #f4a259;
+    --app-text: #f5f5f5;
+    --app-text-muted: #a7a7a7;
+    --app-danger: #dc3545;
+    --app-success: #28a745;
+    --app-shadow-soft: 0 30px 70px rgba(0, 0, 0, 0.35);
+    --app-font-body: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --app-font-heading: "Playfair Display", Georgia, serif;
+}
+
+html,
+body {
+    min-height: 100%;
+}
+
+body.auth-guest-shell {
+    margin: 0;
+    color: var(--app-text);
+    background:
+        radial-gradient(circle at 20% 10%, rgba(244, 162, 89, 0.12), transparent 22%),
+        radial-gradient(circle at 80% 20%, rgba(74, 163, 255, 0.08), transparent 18%),
+        radial-gradient(circle at 50% 100%, rgba(255, 255, 255, 0.04), transparent 30%),
+        var(--app-bg);
+    font-family: var(--app-font-body);
+    overflow-x: hidden;
+}
+
+body.auth-guest-shell::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image: linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+    background-size: 56px 56px;
+    opacity: 0.12;
+    mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.08));
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--app-font-heading);
+}
+
+a {
+    color: inherit;
+}
+
+.auth-page {
+    position: relative;
+    min-height: 100vh;
+    padding: 1.5rem;
+}
+
+.auth-page-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+        radial-gradient(circle at top left, rgba(244, 162, 89, 0.14), transparent 20%),
+        radial-gradient(circle at bottom right, rgba(74, 163, 255, 0.08), transparent 18%);
+    opacity: 0.9;
+}
+
+.auth-page-container {
+    position: relative;
+    width: 100%;
+    max-width: 460px;
+    z-index: 1;
+}
+
+.auth-panel {
+    width: 100%;
+}
+
+.auth-brand-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(244, 162, 89, 0.12);
+    color: var(--app-accent);
+    border: 1px solid rgba(244, 162, 89, 0.25);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
+    font-size: 1.45rem;
+}
+
+.auth-brand-title {
+    font-size: clamp(2rem, 4vw, 2.4rem);
+    letter-spacing: 0.02em;
+    margin: 0;
+}
+
+.auth-brand-subtitle {
+    color: var(--app-text-muted);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-size: 0.78rem;
+}
+
+.auth-card {
+    background: rgba(34, 36, 40, 0.98);
+    border: 1px solid var(--app-border);
+    border-radius: 1.5rem;
+    box-shadow: var(--app-shadow-soft);
+    backdrop-filter: blur(16px);
+    animation: authCardFade 200ms ease-out;
+}
+
+.auth-card-body {
+    padding: 2rem;
+}
+
+.auth-card-title {
+    font-size: 1.55rem;
+    margin: 0;
+}
+
+.auth-card-description {
+    color: var(--app-text-muted);
+}
+
+.auth-alert {
+    background: rgba(220, 53, 69, 0.12);
+    color: var(--app-text);
+    border-color: rgba(220, 53, 69, 0.26);
+}
+
+.auth-alert .btn-close {
+    filter: invert(1);
+}
+
+.auth-field {
+    position: relative;
+}
+
+.auth-floating-field .form-control,
+.auth-floating-field .form-select {
+    height: calc(3.85rem + 2px);
+    padding-top: 1.55rem;
+    padding-bottom: 0.65rem;
+    background-color: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--app-text);
+    border-radius: 1rem;
+}
+
+.auth-floating-field .form-control:focus,
+.auth-floating-field .form-select:focus {
+    color: var(--app-text);
+    background-color: rgba(255, 255, 255, 0.05);
+    border-color: rgba(244, 162, 89, 0.4);
+    box-shadow: 0 0 0 0.24rem rgba(244, 162, 89, 0.12);
+}
+
+.auth-floating-field > label {
+    color: var(--app-text-muted);
+}
+
+.auth-floating-field > .form-control:focus ~ label,
+.auth-floating-field > .form-control:not(:placeholder-shown) ~ label,
+.auth-floating-field > .form-select ~ label {
+    color: var(--app-text-muted);
+}
+
+.auth-control {
+    border-radius: 1rem;
+}
+
+.auth-floating-field {
+    position: relative;
+}
+
+.auth-input-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--app-text-muted);
+    z-index: 3;
+    pointer-events: none;
+}
+
+.auth-floating-field .form-control,
+.auth-floating-field .form-select {
+    padding-left: 2.65rem;
+}
+
+.auth-control-select {
+    appearance: none;
+}
+
+.auth-floating-field label {
+    padding-left: 2.65rem;
+}
+
+.auth-floating-field-password .auth-password-input {
+    padding-right: 3.85rem;
+}
+
+.auth-password-toggle {
+    position: absolute;
+    right: 0.85rem;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 4;
+    width: 2.2rem;
+    height: 2.2rem;
+    border-radius: 50%;
+    border: 0;
+    color: var(--app-text-muted);
+    background: transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 150ms ease, background-color 150ms ease;
+}
+
+.auth-password-toggle:hover,
+.auth-password-toggle:focus-visible {
+    color: var(--app-text);
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.auth-remember-check .form-check-input {
+    background-color: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.14);
+}
+
+.auth-remember-check .form-check-input:checked {
+    background-color: var(--app-accent);
+    border-color: var(--app-accent);
+}
+
+.auth-remember-check .form-check-label {
+    color: var(--app-text-muted);
+    font-size: 0.94rem;
+}
+
+.auth-forgot-link {
+    color: #9cc9ff;
+    transition: color 150ms ease, text-decoration-color 150ms ease;
+}
+
+.auth-forgot-link:hover,
+.auth-forgot-link:focus-visible {
+    color: #c3ddff;
+    text-decoration: underline;
+}
+
+.auth-submit-btn {
+    min-height: 56px;
+    border-radius: 1rem;
+    border: 1px solid rgba(244, 162, 89, 0.18);
+    background: var(--app-accent);
+    color: #151515;
+    font-weight: 700;
+    transition: transform 150ms ease, background-color 150ms ease, box-shadow 150ms ease;
+    box-shadow: 0 12px 24px rgba(244, 162, 89, 0.18);
+}
+
+.auth-submit-btn:hover,
+.auth-submit-btn:focus-visible {
+    color: #151515;
+    background: #ffb66e;
+    transform: translateY(-1px);
+}
+
+.auth-submit-btn:active {
+    background: #e59448;
+    transform: translateY(0);
+}
+
+.auth-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.07);
+}
+
+.auth-system-status {
+    color: var(--app-text-muted);
+    font-size: 0.9rem;
+}
+
+.auth-status-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--app-success);
+    box-shadow: 0 0 0 4px rgba(40, 167, 69, 0.12);
+}
+
+.auth-status-links a {
+    color: var(--app-text-muted);
+    margin-left: 1rem;
+    text-decoration: none;
+}
+
+.auth-status-links a:hover,
+.auth-status-links a:focus-visible {
+    color: var(--app-text);
+    text-decoration: underline;
+}
+
+.auth-footer {
+    color: var(--app-text-muted);
+    font-size: 0.83rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.invalid-feedback {
+    color: #ff8d98;
+}
+
+.form-control.is-invalid,
+.form-select.is-invalid {
+    border-color: rgba(220, 53, 69, 0.65);
+    box-shadow: none;
+}
+
+@keyframes authCardFade {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 991.98px) {
+    .auth-page-container {
+        max-width: min(90vw, 460px);
+    }
+}
+
+@media (max-width: 575.98px) {
+    .auth-page {
+        padding: 24px;
+    }
+
+    .auth-page-container {
+        max-width: 100%;
+    }
+
+    .auth-card-body {
+        padding: 1.5rem;
+    }
+
+    .auth-system-status {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .auth-status-links a {
+        margin-left: 0;
+        margin-right: 1rem;
+    }
+}
