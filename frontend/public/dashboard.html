@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#141414">
+    <title>Operational Dashboard | TransitOps</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="css/transitops.css" rel="stylesheet">
+    <script src="js/api.js"></script>
+    <script>
+        // Check authentication immediately
+        window.currentUser = window.TransitOpsAPI.checkAuth();
+    </script>
+</head>
+
+<body class="bg-app text-app">
+    <div class="app-shell">
+        <!-- Sidebar Panel -->
+        <aside class="app-sidebar d-none d-lg-flex flex-column">
+            <div class="app-sidebar-brand">
+                <div class="app-sidebar-brand-title">TransitOps</div>
+                <div class="app-sidebar-brand-subtitle">Fleet Management</div>
+            </div>
+
+            <div class="app-sidebar-section-title">Navigation</div>
+            <div class="app-sidebar-nav">
+                <a href="dashboard.html" class="app-sidebar-nav-link active" aria-label="Dashboard">
+                    <i class="bi bi-speedometer2"></i>
+                    <span class="app-sidebar-nav-link-text">Dashboard</span>
+                </a>
+                <a href="vehicles.html" class="app-sidebar-nav-link" aria-label="Fleet Registry">
+                    <i class="bi bi-truck-front"></i>
+                    <span class="app-sidebar-nav-link-text">Fleet Registry</span>
+                </a>
+                <a href="drivers.html" class="app-sidebar-nav-link" aria-label="Drivers">
+                    <i class="bi bi-person-badge"></i>
+                    <span class="app-sidebar-nav-link-text">Drivers</span>
+                </a>
+            </div>
+
+            <div class="app-sidebar-footer mt-auto">
+                <button type="button" class="btn btn-app-primary rounded-pill mb-3 w-100" data-bs-toggle="modal" data-bs-target="#createTripModal">
+                    <i class="bi bi-plus-lg me-2"></i> New Dispatch
+                </button>
+                <div class="app-sidebar-footer-copy text-app-muted small">
+                    Dark modern operations workspace.
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Workspace -->
+        <div class="app-main">
+            <!-- Topbar Panel -->
+            <header class="app-topbar">
+                <nav class="navbar navbar-expand-lg navbar-dark px-3 px-xl-4">
+                    <div class="container-fluid gap-3 px-0">
+                        <button class="navbar-toggler border-0 app-topbar-action d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar" aria-label="Toggle navigation">
+                            <i class="bi bi-list"></i>
+                        </button>
+
+                        <div class="app-topbar-search d-flex align-items-center flex-grow-1">
+                            <div class="app-search-input-wrapper w-100">
+                                <span class="app-search-icon"><i class="bi bi-search"></i></span>
+                                <input type="search" class="form-control app-search-input" placeholder="Search vehicles, drivers or trips..." aria-label="Search">
+                            </div>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-2 gap-md-3 ms-auto">
+                            <span class="app-topbar-divider d-none d-md-inline-block"></span>
+
+                            <div class="dropdown">
+                                <button class="btn btn-link text-decoration-none p-0 border-0 app-user-chip dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" type="button">
+                                    <span class="app-user-avatar" aria-hidden="true">TO</span>
+                                    <span class="d-none d-xl-flex flex-column align-items-start lh-sm">
+                                        <span class="app-user-name fw-semibold">Fleet Manager</span>
+                                        <span class="app-user-role">Operator</span>
+                                    </span>
+                                </button>
+
+                                <ul class="dropdown-menu dropdown-menu-end app-dropdown-menu shadow-lg mt-3">
+                                    <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i>Profile</a></li>
+                                    <li><a class="dropdown-item" href="#logout"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </header>
+
+            <!-- Main Content -->
+            <main class="flex-grow-1 app-page">
+                <div class="container-fluid px-0" id="operational-dashboard" data-dashboard-root>
+                    <div class="d-flex flex-column flex-xl-row align-items-xl-end justify-content-between gap-3 mb-4">
+                        <div>
+                            <h1 class="display-5 mb-2">Operational Dashboard</h1>
+                            <p class="text-app-muted mb-0">Monitor fleet activity, vehicle availability and operational insights in real time.</p>
+                        </div>
+                        <span class="badge bg-success d-flex align-items-center gap-2 align-self-start align-self-xl-center px-3 py-2">
+                            <span class="spinner-grow spinner-grow-sm text-light" role="status" aria-hidden="true" style="animation-duration: 2s;"></span>
+                            System Live
+                        </span>
+                    </div>
+
+                    <!-- Filters Card -->
+                    <div class="card app-card mb-4">
+                        <div class="card-body app-card-body">
+                            <div class="row g-3 align-items-end">
+                                <div class="col-12 col-xxl-4">
+                                    <label for="dashboardSearch" class="form-label small text-app-muted text-uppercase fw-semibold letter-spacing-1">Search</label>
+                                    <input type="text" id="dashboardSearch" class="form-control app-search-input py-2" placeholder="Search vehicles, drivers or trips...">
+                                </div>
+
+                                <div class="col-6 col-md-4 col-xxl-2">
+                                    <label class="form-label small text-app-muted text-uppercase fw-semibold letter-spacing-1">Vehicle Type</label>
+                                    <select id="vehicleTypeFilter" class="form-select auth-control py-2">
+                                        <option value="all">All vehicle types</option>
+                                        <option value="Mini Van">Mini Van</option>
+                                        <option value="Truck">Truck</option>
+                                        <option value="Bus">Bus</option>
+                                        <option value="Van">Van</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-6 col-md-4 col-xxl-2">
+                                    <label class="form-label small text-app-muted text-uppercase fw-semibold letter-spacing-1">Status</label>
+                                    <select id="statusFilter" class="form-select auth-control py-2">
+                                        <option value="all">All statuses</option>
+                                        <option value="Available">Available</option>
+                                        <option value="On Trip">On Trip</option>
+                                        <option value="In Shop">In Shop</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-12 col-xl-auto ms-xl-auto d-flex flex-column flex-sm-row gap-2 justify-content-end">
+                                    <button type="button" class="btn btn-app-primary" id="applyFiltersBtn"><i class="bi bi-funnel me-2"></i>Apply Filter</button>
+                                    <button type="button" class="btn btn-outline-secondary text-light" id="resetFiltersBtn"><i class="bi bi-arrow-counterclockwise me-2"></i>Reset</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Metrics Grid -->
+                    <div class="row g-4 row-cols-1 row-cols-md-2 row-cols-xxl-5 mb-4">
+                        <div class="col">
+                            <div class="card app-card h-100" data-metric-card="activeVehicles">
+                                <div class="card-body app-card-body d-flex flex-column justify-content-between">
+                                    <div class="d-flex align-items-center justify-content-between mb-3">
+                                        <div class="text-app-muted small text-uppercase fw-semibold letter-spacing-1">Active Vehicles</div>
+                                        <div class="app-metric-card-icon"><i class="bi bi-truck"></i></div>
+                                    </div>
+                                    <div class="app-metric-card-value mt-2" data-metric-value>--</div>
+                                    <div class="d-flex align-items-center justify-content-between mt-3">
+                                        <span class="small text-app-muted" data-metric-footer>--</span>
+                                        <span class="badge bg-success" data-metric-badge>Active</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card app-card h-100" data-metric-card="availableVehicles">
+                                <div class="card-body app-card-body d-flex flex-column justify-content-between">
+                                    <div class="d-flex align-items-center justify-content-between mb-3">
+                                        <div class="text-app-muted small text-uppercase fw-semibold letter-spacing-1">Available Vehicles</div>
+                                        <div class="app-metric-card-icon"><i class="bi bi-check-circle"></i></div>
+                                    </div>
+                                    <div class="app-metric-card-value mt-2" data-metric-value>--</div>
+                                    <div class="d-flex align-items-center justify-content-between mt-3">
+                                        <span class="small text-app-muted" data-metric-footer>--</span>
+                                        <span class="badge bg-info" data-metric-badge>Ready</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card app-card h-100" data-metric-card="maintenanceVehicles">
+                                <div class="card-body app-card-body d-flex flex-column justify-content-between">
+                                    <div class="d-flex align-items-center justify-content-between mb-3">
+                                        <div class="text-app-muted small text-uppercase fw-semibold letter-spacing-1">In Maintenance</div>
+                                        <div class="app-metric-card-icon"><i class="bi bi-tools"></i></div>
+                                    </div>
+                                    <div class="app-metric-card-value mt-2" data-metric-value>--</div>
+                                    <div class="d-flex align-items-center justify-content-between mt-3">
+                                        <span class="small text-app-muted" data-metric-footer>--</span>
+                                        <span class="badge bg-danger" data-metric-badge>In Shop</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card app-card h-100" data-metric-card="activeTrips">
+                                <div class="card-body app-card-body d-flex flex-column justify-content-between">
+                                    <div class="d-flex align-items-center justify-content-between mb-3">
+                                        <div class="text-app-muted small text-uppercase fw-semibold letter-spacing-1">Active Trips</div>
+                                        <div class="app-metric-card-icon"><i class="bi bi-signpost-split"></i></div>
+                                    </div>
+                                    <div class="app-metric-card-value mt-2" data-metric-value>--</div>
+                                    <div class="d-flex align-items-center justify-content-between mt-3">
+                                        <span class="small text-app-muted" data-metric-footer>--</span>
+                                        <span class="badge bg-info" data-metric-badge>Running</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card app-card h-100" data-metric-card="pendingTrips">
+                                <div class="card-body app-card-body d-flex flex-column justify-content-between">
+                                    <div class="d-flex align-items-center justify-content-between mb-3">
+                                        <div class="text-app-muted small text-uppercase fw-semibold letter-spacing-1">Pending Trips</div>
+                                        <div class="app-metric-card-icon"><i class="bi bi-hourglass-split"></i></div>
+                                    </div>
+                                    <div class="app-metric-card-value mt-2" data-metric-value>--</div>
+                                    <div class="d-flex align-items-center justify-content-between mt-3">
+                                        <span class="small text-app-muted" data-metric-footer>--</span>
+                                        <span class="badge bg-warning text-dark" data-metric-badge>Draft</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Main grid layout -->
+                    <div class="row g-4 mb-4">
+                        <!-- Trips logs table -->
+                        <div class="col-12 col-xxl-8">
+                            <div class="card app-card h-100">
+                                <div class="card-header app-card-header d-flex align-items-center justify-content-between gap-3">
+                                    <div>
+                                        <div class="h5 mb-1">Recent Operational Dispatches</div>
+                                        <div class="text-app-muted small">Logs of recently created and dispatched trips.</div>
+                                    </div>
+                                </div>
+                                <div class="card-body app-card-body p-0">
+                                    <div class="table-responsive">
+                                        <table class="table app-table mb-0 align-middle">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Trip ID</th>
+                                                    <th scope="col">Vehicle</th>
+                                                    <th scope="col">Driver</th>
+                                                    <th scope="col">Destination</th>
+                                                    <th scope="col">Status</th>
+                                                    <th scope="col">ETA</th>
+                                                    <th scope="col" class="text-end">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody data-trip-table-body>
+                                                <tr data-loading-row>
+                                                    <td colspan="7" class="text-center py-4 text-app-muted">
+                                                        <div class="spinner-border spinner-border-sm text-light me-2" role="status"></div>
+                                                        Loading trip logs...
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <!-- Empty state -->
+                                    <div class="text-center py-5 d-none" data-trip-empty>
+                                        <i class="bi bi-journal-x fs-1 text-app-muted mb-3"></i>
+                                        <h5>No trips found</h5>
+                                        <p class="text-app-muted small">Create dispatches to see real-time updates.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Side panel metrics -->
+                        <div class="col-12 col-md-6 col-xxl-4">
+                            <div class="card app-card mb-4" data-utilization-content>
+                                <div class="card-body app-card-body">
+                                    <h5 class="card-title mb-3">Fleet Utilization</h5>
+                                    <div class="d-flex align-items-end justify-content-between gap-3 mb-2">
+                                        <div class="display-6 fw-bold" data-utilization-percentage>--</div>
+                                        <div class="text-app-muted small text-end" data-utilization-summary>--</div>
+                                    </div>
+                                    <div class="progress app-progress-bar mb-3">
+                                        <div class="progress-bar bg-success" data-utilization-used-bar role="progressbar" style="width: 0%"></div>
+                                        <div class="progress-bar bg-info" data-utilization-available-bar role="progressbar" style="width: 0%"></div>
+                                        <div class="progress-bar bg-danger" data-utilization-maintenance-bar role="progressbar" style="width: 0%"></div>
+                                    </div>
+                                    <div class="d-flex flex-wrap gap-3 small text-app-muted justify-content-between">
+                                        <div><span class="badge bg-success me-1">&nbsp;</span> Use: <span data-utilization-used-label>0%</span></div>
+                                        <div><span class="badge bg-info me-1">&nbsp;</span> Ready: <span data-utilization-available-label>0%</span></div>
+                                        <div><span class="badge bg-danger me-1">&nbsp;</span> Maint: <span data-utilization-maintenance-label>0%</span></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card app-card" data-stats-content>
+                                <div class="card-body app-card-body">
+                                    <h5 class="card-title mb-3">Operational Efficiency</h5>
+                                    <div class="d-flex align-items-center justify-content-between gap-3 py-2 border-bottom border-app">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <span class="app-metric-card-icon flex-shrink-0"><i class="bi bi-fuel-pump"></i></span>
+                                            <div>
+                                                <div class="fw-semibold">Fuel Efficiency</div>
+                                                <div class="text-app-muted small">Weighted distance vs fuel consumed</div>
+                                            </div>
+                                        </div>
+                                        <div class="fw-semibold" data-stat-field="fuelEfficiency">--</div>
+                                    </div>
+                                    <div class="d-flex align-items-center justify-content-between gap-3 py-2 border-bottom border-app">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <span class="app-metric-card-icon flex-shrink-0"><i class="bi bi-signpost-split"></i></span>
+                                            <div>
+                                                <div class="fw-semibold">Average Trip Distance</div>
+                                                <div class="text-app-muted small">Weighted completed dispatches</div>
+                                            </div>
+                                        </div>
+                                        <div class="fw-semibold" data-stat-field="tripDistance">--</div>
+                                    </div>
+                                    <div class="d-flex align-items-center justify-content-between gap-3 py-2 border-bottom border-app">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <span class="app-metric-card-icon flex-shrink-0"><i class="bi bi-currency-rupee"></i></span>
+                                            <div>
+                                                <div class="fw-semibold">Total Revenue</div>
+                                                <div class="text-app-muted small">Closed dispatches billing (₹150/km)</div>
+                                            </div>
+                                        </div>
+                                        <div class="fw-semibold" data-stat-field="revenue">--</div>
+                                    </div>
+                                    <div class="d-flex align-items-center justify-content-between gap-3 py-2">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <span class="app-metric-card-icon flex-shrink-0"><i class="bi bi-shield-check"></i></span>
+                                            <div>
+                                                <div class="fw-semibold">Safety Score</div>
+                                                <div class="text-app-muted small">Average driver rating</div>
+                                            </div>
+                                        </div>
+                                        <div class="fw-semibold" data-stat-field="safetyScore">--</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts row -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-12 col-xl-6">
+                            <div class="card app-card h-100">
+                                <div class="card-header app-card-header">
+                                    <div class="h5 mb-1">Fleet Status Distribution</div>
+                                    <div class="text-app-muted small">Live split of operational vehicle availability.</div>
+                                </div>
+                                <div class="card-body app-card-body position-relative">
+                                    <div class="d-none app-empty-state text-center py-5" data-fleet-chart-empty>
+                                        <div class="mb-3 text-app-muted fs-1"><i class="bi bi-inbox"></i></div>
+                                        <div class="h5 mb-2">No chart data available.</div>
+                                    </div>
+                                    <div class="placeholder-glow d-flex flex-column gap-2 py-5" data-fleet-chart-loading>
+                                        <span class="placeholder col-8"></span>
+                                        <span class="placeholder col-10"></span>
+                                        <span class="placeholder col-6"></span>
+                                    </div>
+                                    <div class="ratio ratio-1x1 d-none" data-fleet-chart-wrap style="max-height: 250px; margin: auto;">
+                                        <canvas id="fleetStatusChart" aria-label="Fleet status distribution chart" role="img"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-xl-6">
+                            <div class="card app-card h-100">
+                                <div class="card-header app-card-header">
+                                    <div class="h5 mb-1">Monthly Trips</div>
+                                    <div class="text-app-muted small">Dispatch volume trends across the current year.</div>
+                                </div>
+                                <div class="card-body app-card-body position-relative">
+                                    <div class="d-none app-empty-state text-center py-5" data-monthly-chart-empty>
+                                        <div class="mb-3 text-app-muted fs-1"><i class="bi bi-inbox"></i></div>
+                                        <div class="h5 mb-2">No chart data available.</div>
+                                    </div>
+                                    <div class="placeholder-glow d-flex flex-column gap-2 py-5" data-monthly-chart-loading>
+                                        <span class="placeholder col-7"></span>
+                                        <span class="placeholder col-9"></span>
+                                        <span class="placeholder col-5"></span>
+                                    </div>
+                                    <div class="ratio ratio-16x9 d-none" data-monthly-chart-wrap style="max-height: 250px; margin: auto;">
+                                        <canvas id="monthlyTripsChart" aria-label="Monthly trips chart" role="img"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action buttons -->
+                    <div class="d-flex flex-column flex-sm-row flex-wrap gap-2 justify-content-end mb-4">
+                        <button type="button" class="btn btn-outline-secondary text-light" data-bs-toggle="modal" data-bs-target="#logMaintenanceModal"><i class="bi bi-tools me-2"></i>Log Maintenance</button>
+                        <button type="button" class="btn btn-app-primary" data-bs-toggle="modal" data-bs-target="#createTripModal"><i class="bi bi-plus-circle me-2"></i>Create Trip</button>
+                        <button type="button" class="btn btn-outline-secondary text-light" id="exportReportBtn"><i class="bi bi-download me-2"></i>Export Report</button>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Mobile Sidebar Offcanvas -->
+    <div class="offcanvas offcanvas-start app-sidebar d-lg-none" tabindex="-1" id="mobileSidebar" aria-labelledby="mobileSidebarLabel">
+        <div class="offcanvas-header app-sidebar-brand">
+            <div>
+                <div class="app-sidebar-brand-title" id="mobileSidebarLabel">TransitOps</div>
+                <div class="app-sidebar-brand-subtitle">Fleet Management</div>
+            </div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-column p-0">
+            <div class="app-sidebar-section-title">Navigation</div>
+            <div class="app-sidebar-nav">
+                <a href="dashboard.html" class="app-sidebar-nav-link active">
+                    <i class="bi bi-speedometer2"></i>
+                    <span class="app-sidebar-nav-link-text">Dashboard</span>
+                </a>
+                <a href="vehicles.html" class="app-sidebar-nav-link">
+                    <i class="bi bi-truck-front"></i>
+                    <span class="app-sidebar-nav-link-text">Fleet Registry</span>
+                </a>
+                <a href="drivers.html" class="app-sidebar-nav-link">
+                    <i class="bi bi-person-badge"></i>
+                    <span class="app-sidebar-nav-link-text">Drivers</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Create Trip -->
+    <div class="modal fade" id="createTripModal" tabindex="-1" aria-labelledby="createTripModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content bg-app border-app">
+                <div class="modal-header border-bottom border-app">
+                    <h5 class="modal-title" id="createTripModalLabel">Create New Trip Dispatch</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="create-trip-form">
+                    <div class="modal-body">
+                        <div class="alert alert-danger d-none" id="trip-modal-error"></div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="modal_trip_id" class="form-label small text-app-muted text-uppercase fw-semibold">Trip ID</label>
+                                <input type="text" class="form-control app-search-input" id="modal_trip_id" placeholder="e.g. TRP-1009" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="modal_cargo_weight" class="form-label small text-app-muted text-uppercase fw-semibold">Cargo Weight (kg)</label>
+                                <input type="number" class="form-control app-search-input" id="modal_cargo_weight" placeholder="e.g. 450" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="modal_source" class="form-label small text-app-muted text-uppercase fw-semibold">Source Location</label>
+                                <input type="text" class="form-control app-search-input" id="modal_source" placeholder="e.g. Ahmedabad" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="modal_destination" class="form-label small text-app-muted text-uppercase fw-semibold">Destination Location</label>
+                                <input type="text" class="form-control app-search-input" id="modal_destination" placeholder="e.g. Vadodara" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="modal_vehicle_select" class="form-label small text-app-muted text-uppercase fw-semibold">Assign Vehicle</label>
+                                <select class="form-select auth-control" id="modal_vehicle_select" required>
+                                    <option value="" disabled selected>Loading available vehicles...</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="modal_driver_select" class="form-label small text-app-muted text-uppercase fw-semibold">Assign Driver</label>
+                                <select class="form-select auth-control" id="modal_driver_select" required>
+                                    <option value="" disabled selected>Loading available drivers...</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="modal_distance" class="form-label small text-app-muted text-uppercase fw-semibold">Planned Distance (km)</label>
+                                <input type="number" class="form-control app-search-input" id="modal_distance" placeholder="e.g. 120" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="modal_eta" class="form-label small text-app-muted text-uppercase fw-semibold">ETA (e.g. 15:30 or Date)</label>
+                                <input type="text" class="form-control app-search-input" id="modal_eta" placeholder="e.g. 18:40" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-top border-app">
+                        <button type="button" class="btn btn-outline-secondary text-light" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-app-primary" id="saveTripBtn">Create & Dispatch</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Log Maintenance -->
+    <div class="modal fade" id="logMaintenanceModal" tabindex="-1" aria-labelledby="logMaintenanceModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-app border-app">
+                <div class="modal-header border-bottom border-app">
+                    <h5 class="modal-title" id="logMaintenanceModalLabel">Log Vehicle Maintenance</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="log-maintenance-form">
+                    <div class="modal-body">
+                        <div class="alert alert-danger d-none" id="maint-modal-error"></div>
+                        <div class="mb-3">
+                            <label for="maint_vehicle_select" class="form-label small text-app-muted text-uppercase fw-semibold">Vehicle</label>
+                            <select class="form-select auth-control" id="maint_vehicle_select" required>
+                                <option value="" disabled selected>Loading vehicles...</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="maint_type" class="form-label small text-app-muted text-uppercase fw-semibold">Maintenance Type</label>
+                            <input type="text" class="form-control app-search-input" id="maint_type" placeholder="e.g. Oil Change, Break Replacement" required>
+                        </div>
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="maint_cost" class="form-label small text-app-muted text-uppercase fw-semibold">Estimated Cost (₹)</label>
+                                <input type="number" class="form-control app-search-input" id="maint_cost" placeholder="e.g. 5000" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="maint_date" class="form-label small text-app-muted text-uppercase fw-semibold">Start Date</label>
+                                <input type="date" class="form-control app-search-input" id="maint_date" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="maint_notes" class="form-label small text-app-muted text-uppercase fw-semibold">Notes / Details</label>
+                            <textarea class="form-control app-search-input" id="maint_notes" rows="3" placeholder="Enter service description..."></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-top border-app">
+                        <button type="button" class="btn btn-outline-secondary text-light" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger" id="saveMaintBtn">Submit & Put in Shop</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Template for Trip Table Row -->
+    <template id="trip-row-template">
+        <tr>
+            <td class="fw-semibold" data-field="tripId">--</td>
+            <td data-field="vehicle">--</td>
+            <td data-field="driver">--</td>
+            <td data-field="destination">--</td>
+            <td>
+                <span class="badge" data-status-badge data-field="status">--</span>
+            </td>
+            <td data-field="eta">--</td>
+            <td class="text-end" data-row-actions>
+                <!-- Rendered dynamically depending on trip status -->
+            </td>
+        </tr>
+    </template>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+
+</html>

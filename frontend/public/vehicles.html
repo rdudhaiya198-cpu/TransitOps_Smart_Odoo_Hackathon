@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#141414">
+    <title>Vehicle Registry | TransitOps</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="css/transitops.css" rel="stylesheet">
+    <script src="js/api.js"></script>
+    <script>
+        window.currentUser = window.TransitOpsAPI.checkAuth();
+    </script>
+</head>
+
+<body class="bg-app text-app">
+    <div class="app-shell">
+        <!-- Sidebar Panel -->
+        <aside class="app-sidebar d-none d-lg-flex flex-column">
+            <div class="app-sidebar-brand">
+                <div class="app-sidebar-brand-title">TransitOps</div>
+                <div class="app-sidebar-brand-subtitle">Fleet Management</div>
+            </div>
+
+            <div class="app-sidebar-section-title">Navigation</div>
+            <div class="app-sidebar-nav">
+                <a href="dashboard.html" class="app-sidebar-nav-link" aria-label="Dashboard">
+                    <i class="bi bi-speedometer2"></i>
+                    <span class="app-sidebar-nav-link-text">Dashboard</span>
+                </a>
+                <a href="vehicles.html" class="app-sidebar-nav-link active" aria-label="Fleet Registry">
+                    <i class="bi bi-truck-front"></i>
+                    <span class="app-sidebar-nav-link-text">Fleet Registry</span>
+                </a>
+                <a href="drivers.html" class="app-sidebar-nav-link" aria-label="Drivers">
+                    <i class="bi bi-person-badge"></i>
+                    <span class="app-sidebar-nav-link-text">Drivers</span>
+                </a>
+            </div>
+
+            <div class="app-sidebar-footer mt-auto">
+                <div class="app-sidebar-footer-copy text-app-muted small">
+                    Dark modern operations workspace.
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Workspace -->
+        <div class="app-main">
+            <!-- Topbar Panel -->
+            <header class="app-topbar">
+                <nav class="navbar navbar-expand-lg navbar-dark px-3 px-xl-4">
+                    <div class="container-fluid gap-3 px-0">
+                        <button class="navbar-toggler border-0 app-topbar-action d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar" aria-label="Toggle navigation">
+                            <i class="bi bi-list"></i>
+                        </button>
+
+                        <div class="app-topbar-search d-flex align-items-center flex-grow-1">
+                            <div class="app-search-input-wrapper w-100">
+                                <span class="app-search-icon"><i class="bi bi-search"></i></span>
+                                <input type="search" class="form-control app-search-input" name="vehicle_registry_search" placeholder="Search by registration number, model or vehicle type..." aria-label="Search">
+                            </div>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-2 gap-md-3 ms-auto">
+                            <span class="app-topbar-divider d-none d-md-inline-block"></span>
+
+                            <div class="dropdown">
+                                <button class="btn btn-link text-decoration-none p-0 border-0 app-user-chip dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" type="button">
+                                    <span class="app-user-avatar" aria-hidden="true">TO</span>
+                                    <span class="d-none d-xl-flex flex-column align-items-start lh-sm">
+                                        <span class="app-user-name fw-semibold">Fleet Manager</span>
+                                        <span class="app-user-role">Operator</span>
+                                    </span>
+                                </button>
+
+                                <ul class="dropdown-menu dropdown-menu-end app-dropdown-menu shadow-lg mt-3">
+                                    <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i>Profile</a></li>
+                                    <li><a class="dropdown-item" href="#logout"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </header>
+
+            <!-- Main Page Content -->
+            <main class="flex-grow-1 app-page">
+                <div class="container-fluid px-0" id="vehicle-registry-page" data-vehicle-registry-root>
+                    <div class="d-flex flex-column flex-lg-row align-items-lg-end justify-content-between gap-3 mb-4">
+                        <div>
+                            <h1 class="display-5 mb-2">Vehicle Registry</h1>
+                            <p class="text-app-muted mb-0">Manage fleet assets, registrations and operational availability.</p>
+                        </div>
+                        <button type="button" class="btn btn-app-primary align-self-start align-self-lg-center" data-vehicle-create-button>
+                            <i class="bi bi-plus-lg me-2"></i>Register Vehicle
+                        </button>
+                    </div>
+
+                    <!-- Filters Card -->
+                    <div class="card app-card mb-4">
+                        <div class="card-body app-card-body">
+                            <div class="row g-3 align-items-end">
+                                <div class="col-12 col-xl-5">
+                                    <label class="form-label small text-app-muted text-uppercase fw-semibold letter-spacing-1">Search</label>
+                                    <input type="text" id="filter-search" class="form-control app-search-input py-2" placeholder="Search by registration number, model or vehicle type...">
+                                </div>
+
+                                <div class="col-12 col-xl-7">
+                                    <div class="d-flex flex-column flex-xxl-row gap-3 justify-content-xxl-end align-items-stretch align-items-xxl-end">
+                                        <div>
+                                            <label class="form-label small text-app-muted text-uppercase fw-semibold letter-spacing-1">Vehicle Type</label>
+                                            <select id="filter-type" class="form-select auth-control py-2">
+                                                <option value="all">All vehicle types</option>
+                                                <option value="Mini Van">Mini Van</option>
+                                                <option value="Truck">Truck</option>
+                                                <option value="Bus">Bus</option>
+                                                <option value="Pickup">Pickup</option>
+                                                <option value="Sedan">Sedan</option>
+                                            </select>
+                                        </div>
+
+                                        <div>
+                                            <label class="form-label small text-app-muted text-uppercase fw-semibold letter-spacing-1">Status</label>
+                                            <select id="filter-status" class="form-select auth-control py-2">
+                                                <option value="all">All statuses</option>
+                                                <option value="Available">Available</option>
+                                                <option value="On Trip">On Trip</option>
+                                                <option value="Maintenance">Maintenance</option>
+                                                <option value="Retired">Retired</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="d-flex flex-column flex-sm-row gap-2 align-self-stretch align-self-xxl-end mt-2 mt-xxl-0">
+                                            <button type="button" class="btn btn-outline-secondary text-light w-100" id="reset-filters-btn"><i class="bi bi-arrow-counterclockwise me-2"></i>Reset</button>
+                                            <button type="button" class="btn btn-app-primary w-100" id="apply-filters-btn"><i class="bi bi-funnel me-2"></i>Apply</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Metrics summary -->
+                    <div class="row g-4 row-cols-1 row-cols-md-2 row-cols-xl-4 mb-4">
+                        <div class="col">
+                            <div class="card app-card h-100" data-summary-card="total">
+                                <div class="card-body app-card-body d-flex flex-column justify-content-between">
+                                    <div class="d-flex align-items-center justify-content-between mb-3">
+                                        <div class="text-app-muted small text-uppercase fw-semibold letter-spacing-1">Total Vehicles</div>
+                                        <div class="app-metric-card-icon"><i class="bi bi-truck"></i></div>
+                                    </div>
+                                    <div class="app-metric-card-value mt-2" data-summary-value>--</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card app-card h-100" data-summary-card="available">
+                                <div class="card-body app-card-body d-flex flex-column justify-content-between">
+                                    <div class="d-flex align-items-center justify-content-between mb-3">
+                                        <div class="text-app-muted small text-uppercase fw-semibold letter-spacing-1">Available</div>
+                                        <div class="app-metric-card-icon"><i class="bi bi-check-circle"></i></div>
+                                    </div>
+                                    <div class="app-metric-card-value mt-2" data-summary-value>--</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card app-card h-100" data-summary-card="onTrip">
+                                <div class="card-body app-card-body d-flex flex-column justify-content-between">
+                                    <div class="d-flex align-items-center justify-content-between mb-3">
+                                        <div class="text-app-muted small text-uppercase fw-semibold letter-spacing-1">On Trip</div>
+                                        <div class="app-metric-card-icon"><i class="bi bi-signpost-2"></i></div>
+                                    </div>
+                                    <div class="app-metric-card-value mt-2" data-summary-value>--</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card app-card h-100" data-summary-card="maintenance">
+                                <div class="card-body app-card-body d-flex flex-column justify-content-between">
+                                    <div class="d-flex align-items-center justify-content-between mb-3">
+                                        <div class="text-app-muted small text-uppercase fw-semibold letter-spacing-1">Maintenance</div>
+                                        <div class="app-metric-card-icon"><i class="bi bi-tools"></i></div>
+                                    </div>
+                                    <div class="app-metric-card-value mt-2" data-summary-value>--</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Vehicles list card -->
+                    <div class="card app-card">
+                        <div class="card-header app-card-header d-flex flex-column flex-lg-row align-items-lg-end justify-content-between gap-3 w-100">
+                            <div>
+                                <div class="h5 mb-1">Fleet Assets</div>
+                                <div class="text-app-muted small">View, filter and manage registered vehicles.</div>
+                            </div>
+                            <div class="text-app-muted small text-lg-end">
+                                <div class="fw-semibold text-app" id="vehicle-count-label">Loading vehicles...</div>
+                                <div id="vehicle-page-info">Preparing registry data...</div>
+                            </div>
+                        </div>
+
+                        <div class="card-body app-card-body p-0">
+                            <!-- Empty states -->
+                            <div class="d-none app-empty-state text-center py-5" data-vehicle-empty>
+                                <div class="mb-3 text-app-muted fs-1"><i class="bi bi-truck"></i></div>
+                                <div class="h5 mb-2">No vehicles have been registered yet.</div>
+                                <button type="button" class="btn btn-app-primary mt-3" data-vehicle-create-button>
+                                    <i class="bi bi-plus-lg me-2"></i>Register Vehicle
+                                </button>
+                            </div>
+
+                            <div class="d-none app-empty-state text-center py-5" data-vehicle-filter-empty>
+                                <div class="mb-3 text-app-muted fs-1"><i class="bi bi-search"></i></div>
+                                <div class="h5 mb-2">No vehicles match the current filters.</div>
+                                <button type="button" class="btn btn-outline-secondary text-light mt-3" id="reset-filters-btn-empty">
+                                    Reset Filters
+                                </button>
+                            </div>
+
+                            <!-- Vehicles Table -->
+                            <div class="table-responsive" id="vehicles-table-wrapper">
+                                <table class="table app-table mb-0 align-middle">
+                                    <thead>
+                                        <tr>
+                                            <th>Registration Number</th>
+                                            <th>Vehicle</th>
+                                            <th>Vehicle Type</th>
+                                            <th>Capacity</th>
+                                            <th>Odometer</th>
+                                            <th>Status</th>
+                                            <th class="text-end">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="vehicle-table-body">
+                                        <tr data-loading-row>
+                                            <td colspan="7" class="text-center py-4 text-app-muted">
+                                                <div class="spinner-border spinner-border-sm text-light me-2" role="status"></div>
+                                                Loading fleet assets...
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Pagination -->
+                            <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 p-3 border-top border-app">
+                                <div class="text-app-muted small" id="vehicle-page-summary">Loading page summary...</div>
+                                <nav aria-label="Vehicle registry pagination">
+                                    <ul class="pagination mb-0 app-pagination" id="vehicle-pagination-list">
+                                        <!-- Rendered dynamically -->
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Mobile Sidebar Offcanvas -->
+    <div class="offcanvas offcanvas-start app-sidebar d-lg-none" tabindex="-1" id="mobileSidebar" aria-labelledby="mobileSidebarLabel">
+        <div class="offcanvas-header app-sidebar-brand">
+            <div>
+                <div class="app-sidebar-brand-title" id="mobileSidebarLabel">TransitOps</div>
+                <div class="app-sidebar-brand-subtitle">Fleet Management</div>
+            </div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-column p-0">
+            <div class="app-sidebar-section-title">Navigation</div>
+            <div class="app-sidebar-nav">
+                <a href="dashboard.html" class="app-sidebar-nav-link">
+                    <i class="bi bi-speedometer2"></i>
+                    <span class="app-sidebar-nav-link-text">Dashboard</span>
+                </a>
+                <a href="vehicles.html" class="app-sidebar-nav-link active">
+                    <i class="bi bi-truck-front"></i>
+                    <span class="app-sidebar-nav-link-text">Fleet Registry</span>
+                </a>
+                <a href="drivers.html" class="app-sidebar-nav-link">
+                    <i class="bi bi-person-badge"></i>
+                    <span class="app-sidebar-nav-link-text">Drivers</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Register / Edit Vehicle -->
+    <div class="modal fade" id="vehicleFormModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+            <div class="modal-content bg-app border-app">
+                <div class="modal-header border-bottom border-app">
+                    <div>
+                        <h5 class="modal-title" id="vehicle-modal-title">Register Vehicle</h5>
+                        <div class="text-app-muted small">Add or update fleet asset details.</div>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="alert alert-danger d-none" id="vehicle-modal-error"></div>
+                    <form id="vehicle-form">
+                        <input type="hidden" id="vehicle-id">
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6">
+                                <label for="vehicle-registration-number" class="form-label small text-app-muted fw-semibold">Registration Number</label>
+                                <input type="text" class="form-control app-search-input" id="vehicle-registration-number" required maxlength="20" placeholder="e.g. GJ01AB4589">
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label for="vehicle-name" class="form-label small text-app-muted fw-semibold">Vehicle Name / Model</label>
+                                <input type="text" class="form-control app-search-input" id="vehicle-name" required maxlength="80" placeholder="e.g. Tata Ultra Truck">
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label for="vehicle-type" class="form-label small text-app-muted fw-semibold">Vehicle Type</label>
+                                <select class="form-select auth-control" id="vehicle-type" required>
+                                    <option value="" disabled selected>Select vehicle type</option>
+                                    <option value="Mini Van">Mini Van</option>
+                                    <option value="Truck">Truck</option>
+                                    <option value="Bus">Bus</option>
+                                    <option value="Pickup">Pickup</option>
+                                    <option value="Sedan">Sedan</option>
+                                </select>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label for="vehicle-status" class="form-label small text-app-muted fw-semibold">Status</label>
+                                <select class="form-select auth-control" id="vehicle-status" required>
+                                    <option value="Available">Available</option>
+                                    <option value="On Trip">On Trip</option>
+                                    <option value="Maintenance">Maintenance</option>
+                                    <option value="Retired">Retired</option>
+                                </select>
+                            </div>
+
+                            <div class="col-12 col-md-4">
+                                <label for="vehicle-capacity" class="form-label small text-app-muted fw-semibold">Max Load Capacity (kg / seats)</label>
+                                <input type="number" class="form-control app-search-input" id="vehicle-capacity" min="0.01" step="0.01" required placeholder="e.g. 1500">
+                            </div>
+
+                            <div class="col-12 col-md-4">
+                                <label for="vehicle-odometer" class="form-label small text-app-muted fw-semibold">Current Odometer (km)</label>
+                                <input type="number" class="form-control app-search-input" id="vehicle-odometer" min="0" step="1" required placeholder="e.g. 15000">
+                            </div>
+
+                            <div class="col-12 col-md-4">
+                                <label for="vehicle-acquisition-cost" class="form-label small text-app-muted fw-semibold">Acquisition Cost (₹)</label>
+                                <input type="number" class="form-control app-search-input" id="vehicle-acquisition-cost" min="0.01" step="0.01" required placeholder="e.g. 1200000">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer border-top border-app">
+                    <button type="button" class="btn btn-outline-secondary text-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" form="vehicle-form" class="btn btn-app-primary" id="save-vehicle-btn">Save Vehicle</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Delete Vehicle -->
+    <div class="modal fade" id="vehicleDeleteModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-app border-app">
+                <div class="modal-header border-bottom border-app">
+                    <h5 class="modal-title">Delete Vehicle</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-app-muted mb-0">Are you sure you want to remove this vehicle asset from registry?</p>
+                </div>
+                <div class="modal-footer border-top border-app">
+                    <button type="button" class="btn btn-outline-secondary text-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirm-delete-btn">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Row Template -->
+    <template id="vehicle-row-template">
+        <tr>
+            <td class="fw-semibold" data-field="registrationNumber">--</td>
+            <td data-field="name">--</td>
+            <td data-field="type">--</td>
+            <td data-field="capacity">--</td>
+            <td data-field="odometer">--</td>
+            <td>
+                <span class="badge" data-status-badge>--</span>
+            </td>
+            <td class="text-end">
+                <button type="button" class="btn btn-sm btn-outline-secondary text-light me-1" data-vehicle-action="view"><i class="bi bi-eye"></i></button>
+                <button type="button" class="btn btn-sm btn-outline-secondary text-light me-1" data-vehicle-action="edit"><i class="bi bi-pencil-square"></i></button>
+                <button type="button" class="btn btn-sm btn-outline-danger" data-vehicle-action="delete"><i class="bi bi-trash"></i></button>
+            </td>
+        </tr>
+    </template>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="js/vehicle-registry.js"></script>
+</body>
+
+</html>
