@@ -9,7 +9,6 @@ import {
   Truck, 
   AlertCircle, 
   Gauge, 
-  DollarSign, 
   Weight, 
   FileText
 } from 'lucide-react';
@@ -36,14 +35,14 @@ export default function VehicleDashboard({ token }) {
     status: 'Available'
   });
   
-  // Document Management State (Mock feature)
+  // Document Management State
   const [isDocModalOpen, setIsDocModalOpen] = useState(false);
   const [activeDocVehicle, setActiveDocVehicle] = useState(null);
-  const [docs, setDocs] = useState({}); // {vehicleId: [{name: '', date: ''}]}
+  const [docs, setDocs] = useState({});
 
   const [isOffline, setIsOffline] = useState(false);
 
-  // Default Mock Data for Offline fallback
+  // Default Mock Data
   const mockVehicles = [
     {
       id: 'mock-v1',
@@ -87,12 +86,10 @@ export default function VehicleDashboard({ token }) {
     }
   ];
 
-  // Fetch Vehicles
   const fetchVehicles = async () => {
     setLoading(true);
     setError('');
     
-    // If it's a demo token, load mockup immediately
     if (token === 'demo-token') {
       const stored = localStorage.getItem('transitops_mock_vehicles');
       if (stored) {
@@ -127,7 +124,6 @@ export default function VehicleDashboard({ token }) {
       setIsOffline(false);
     } catch (err) {
       console.warn("Backend connection failed. Falling back to local storage.", err);
-      // Fallback
       const stored = localStorage.getItem('transitops_mock_vehicles');
       if (stored) {
         setVehicles(JSON.parse(stored));
@@ -145,16 +141,11 @@ export default function VehicleDashboard({ token }) {
     fetchVehicles();
   }, [token, statusFilter]);
 
-  // Handle Form Inputs
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm({
-      ...form,
-      [name]: value
-    });
+    setForm({ ...form, [name]: value });
   };
 
-  // Open Modal for Add
   const openAddModal = () => {
     setEditId(null);
     setForm({
@@ -169,7 +160,6 @@ export default function VehicleDashboard({ token }) {
     setIsModalOpen(true);
   };
 
-  // Open Modal for Edit
   const openEditModal = (vehicle) => {
     setEditId(vehicle.id);
     setForm({
@@ -184,7 +174,6 @@ export default function VehicleDashboard({ token }) {
     setIsModalOpen(true);
   };
 
-  // Submit Form (Add/Edit)
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -197,7 +186,6 @@ export default function VehicleDashboard({ token }) {
     };
 
     if (isOffline) {
-      // Offline implementation
       let updatedVehicles;
       if (editId) {
         updatedVehicles = vehicles.map(v => v.id === editId ? { ...v, ...formattedForm } : v);
@@ -239,7 +227,6 @@ export default function VehicleDashboard({ token }) {
     }
   };
 
-  // Delete Vehicle
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this vehicle?')) return;
 
@@ -265,28 +252,24 @@ export default function VehicleDashboard({ token }) {
     }
   };
 
-  // Status Badge Design helper
   const getStatusBadgeClass = (status) => {
     switch (status) {
       case 'Available':
-        return 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20';
+        return 'bg-earth-sage/10 text-earth-sage border border-earth-sage/20';
       case 'On Trip':
-        return 'bg-blue-500/10 text-blue-500 border border-blue-500/20';
+        return 'bg-amber-600/10 text-amber-700 border border-amber-600/20';
       case 'In Shop':
-        return 'bg-amber-500/10 text-amber-500 border border-amber-500/20';
+        return 'bg-earth-clay/10 text-earth-clay border border-earth-clay/20';
       case 'Retired':
-        return 'bg-rose-500/10 text-rose-500 border border-rose-500/20';
+        return 'bg-rose-500/10 text-rose-600 border border-rose-500/20';
       default:
-        return 'bg-slate-500/10 text-slate-500';
+        return 'bg-earth-muted/10 text-earth-muted border border-earth-border';
     }
   };
 
-  // Document Management mock actions
   const openDocModal = (vehicle) => {
     setActiveDocVehicle(vehicle);
     setIsDocModalOpen(true);
-    
-    // Load documents
     const savedDocs = localStorage.getItem('transitops_mock_docs');
     if (savedDocs) {
       setDocs(JSON.parse(savedDocs));
@@ -324,7 +307,6 @@ export default function VehicleDashboard({ token }) {
     localStorage.setItem('transitops_mock_docs', JSON.stringify(updatedDocs));
   };
 
-  // Filter logic
   const filteredVehicles = vehicles.filter(v => 
     (v.name_model.toLowerCase().includes(search.toLowerCase()) || 
      v.registration_number.toLowerCase().includes(search.toLowerCase()) ||
@@ -335,43 +317,43 @@ export default function VehicleDashboard({ token }) {
   return (
     <div className="flex-1 overflow-auto p-4 md:p-8">
       {/* Header section */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 md:mb-8 text-left">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight">Vehicles Registry</h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-1">Manage and track fleet transport vehicles.</p>
+          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Vehicles Registry</h1>
+          <p className="text-earth-muted mt-1 text-xs md:text-sm">Manage and track fleet transport vehicles.</p>
         </div>
         <button
           onClick={openAddModal}
-          className="flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white rounded-2xl font-bold shadow-lg hover:shadow-purple-500/20 transition-all duration-200"
+          className="flex items-center justify-center gap-2 px-5 py-3.5 bg-earth-clay hover:bg-earth-clay-hover text-white rounded-2xl font-bold shadow-md transition-all duration-200 cursor-pointer text-sm sm:w-auto"
         >
           <Plus className="w-5 h-5" /> Add Vehicle
         </button>
       </div>
 
       {isOffline && (
-        <div className="bg-amber-500/10 border border-amber-500/20 text-amber-500 p-3 rounded-2xl mb-6 text-sm flex items-center gap-2">
-          <AlertCircle className="w-4 h-4" />
-          <span>Running in <strong>Demo/Offline Mode</strong>. All additions and edits will be stored in your local browser storage.</span>
+        <div className="bg-earth-clay/10 border border-earth-clay/20 text-earth-clay p-3.5 rounded-2xl mb-6 text-xs sm:text-sm flex items-center gap-2 text-left font-medium">
+          <AlertCircle className="w-4 h-4 flex-shrink-0" />
+          <span>Running in <strong>Demo/Offline Mode</strong>. Records are saved locally.</span>
         </div>
       )}
 
       {/* Toolbar / Search Filters */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-4 mb-6 shadow-sm flex flex-col md:flex-row gap-4">
+      <div className="bg-earth-surface border border-earth-border rounded-3xl p-4 mb-6 shadow-xs flex flex-col sm:flex-row gap-4">
         <div className="flex-1 relative">
-          <Search className="absolute inset-y-0 left-3 my-auto w-5 h-5 text-slate-400" />
+          <Search className="absolute inset-y-0 left-3 my-auto w-5 h-5 text-earth-muted" />
           <input
             type="text"
             placeholder="Search by model, registration, or type..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 pl-10 pr-4 py-2.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+            className="w-full bg-earth-bg border border-earth-border pl-10 pr-4 py-2.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-earth-clay/40 text-xs sm:text-sm text-earth-text placeholder-earth-muted"
           />
         </div>
-        <div className="w-full md:w-48">
+        <div className="w-full sm:w-48">
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 appearance-none cursor-pointer"
+            className="w-full bg-earth-bg border border-earth-border px-4 py-2.5 rounded-2xl focus:outline-none focus:ring-2 focus:ring-earth-clay/40 appearance-none cursor-pointer text-xs sm:text-sm text-earth-text"
           >
             <option value="">All Statuses</option>
             <option value="Available">Available</option>
@@ -382,101 +364,173 @@ export default function VehicleDashboard({ token }) {
         </div>
       </div>
 
-      {/* Table Content */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-sm">
-        {loading ? (
-          <div className="flex flex-col items-center justify-center p-16 gap-3">
-            <Loader2 className="w-8 h-8 text-purple-500 animate-spin" />
-            <span className="text-slate-500">Loading fleet registry...</span>
+      {/* Loader / Empty States */}
+      {loading ? (
+        <div className="flex flex-col items-center justify-center p-16 gap-3 bg-earth-surface border border-earth-border rounded-3xl">
+          <Loader2 className="w-8 h-8 text-earth-clay animate-spin" />
+          <span className="text-earth-muted text-sm font-semibold">Loading fleet registry...</span>
+        </div>
+      ) : filteredVehicles.length === 0 ? (
+        <div className="flex flex-col items-center justify-center p-16 text-center bg-earth-surface border border-earth-border rounded-3xl">
+          <div className="p-4 bg-earth-bg border border-earth-border rounded-full mb-4">
+            <Truck className="w-8 h-8 text-earth-muted" />
           </div>
-        ) : filteredVehicles.length === 0 ? (
-          <div className="flex flex-col items-center justify-center p-16 text-center">
-            <div className="p-4 bg-slate-100 dark:bg-slate-800 rounded-full mb-4">
-              <Truck className="w-8 h-8 text-slate-400" />
-            </div>
-            <h3 className="font-bold text-lg">No vehicles found</h3>
-            <p className="text-slate-500 dark:text-slate-400 mt-1 max-w-sm">No vehicles match your search query. Add a new one to get started.</p>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-500 text-xs font-bold uppercase tracking-wider">
-                  <th className="py-4 px-6">Vehicle Info</th>
-                  <th className="py-4 px-6">Reg Number</th>
-                  <th className="py-4 px-6">Max capacity</th>
-                  <th className="py-4 px-6">Odometer</th>
-                  <th className="py-4 px-6">Status</th>
-                  <th className="py-4 px-6 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                {filteredVehicles.map((vehicle) => (
-                  <tr key={vehicle.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-all duration-150">
-                    <td className="py-4 px-6">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2.5 bg-purple-500/10 rounded-xl text-purple-500 flex items-center justify-center">
-                          <Truck className="w-5 h-5" />
-                        </div>
-                        <div>
-                          <p className="font-bold text-sm">{vehicle.name_model}</p>
-                          <span className="text-xs text-slate-500">{vehicle.type}</span>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="py-4 px-6 font-mono text-sm font-semibold">{vehicle.registration_number}</td>
-                    <td className="py-4 px-6 text-sm">{vehicle.max_load_capacity.toLocaleString()} kg</td>
-                    <td className="py-4 px-6 text-sm">{vehicle.odometer.toLocaleString()} km</td>
-                    <td className="py-4 px-6">
-                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold tracking-wide ${getStatusBadgeClass(vehicle.status)}`}>
-                        {vehicle.status}
-                      </span>
-                    </td>
-                    <td className="py-4 px-6 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <button
-                          onClick={() => openDocModal(vehicle)}
-                          className="p-2 text-slate-500 hover:text-purple-500 hover:bg-purple-500/10 rounded-xl transition-all"
-                          title="Manage Documents"
-                        >
-                          <FileText className="w-4.5 h-4.5" />
-                        </button>
-                        <button
-                          onClick={() => openEditModal(vehicle)}
-                          className="p-2 text-slate-500 hover:text-blue-500 hover:bg-blue-500/10 rounded-xl transition-all"
-                          title="Edit"
-                        >
-                          <Edit className="w-4.5 h-4.5" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(vehicle.id)}
-                          className="p-2 text-slate-500 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all"
-                          title="Delete"
-                        >
-                          <Trash2 className="w-4.5 h-4.5" />
-                        </button>
-                      </div>
-                    </td>
+          <h3 className="font-bold text-base md:text-lg">No vehicles found</h3>
+          <p className="text-earth-muted mt-1 max-w-sm text-xs sm:text-sm">No vehicles match your search query. Add a new one to get started.</p>
+        </div>
+      ) : (
+        <>
+          {/* DESKTOP TABLE VIEW */}
+          <div className="hidden md:block bg-earth-surface border border-earth-border rounded-3xl overflow-hidden shadow-xs text-left">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="border-b border-earth-border bg-earth-surface/80 text-earth-muted text-xs font-bold uppercase tracking-wider">
+                    <th className="py-4 px-6">Vehicle Info</th>
+                    <th className="py-4 px-6">Reg Number</th>
+                    <th className="py-4 px-6">Max capacity</th>
+                    <th className="py-4 px-6">Odometer</th>
+                    <th className="py-4 px-6">Status</th>
+                    <th className="py-4 px-6 text-right">Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-
-      {/* Add/Edit Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="w-full max-w-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-              <h2 className="text-xl font-extrabold">{editId ? 'Edit Vehicle' : 'Add New Vehicle'}</h2>
-              <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-100 font-bold">Close</button>
+                </thead>
+                <tbody className="divide-y divide-earth-border">
+                  {filteredVehicles.map((vehicle) => (
+                    <tr key={vehicle.id} className="hover:bg-earth-bg/50 transition-all duration-150">
+                      <td className="py-4 px-6">
+                        <div className="flex items-center gap-3">
+                          <div className="p-2.5 bg-earth-clay/10 rounded-xl text-earth-clay flex items-center justify-center border border-earth-clay/10">
+                            <Truck className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <p className="font-bold text-sm">{vehicle.name_model}</p>
+                            <span className="text-xs text-earth-muted font-bold">{vehicle.type}</span>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="py-4 px-6 font-mono text-sm font-semibold">{vehicle.registration_number}</td>
+                      <td className="py-4 px-6 text-sm">{vehicle.max_load_capacity.toLocaleString()} kg</td>
+                      <td className="py-4 px-6 text-sm">{vehicle.odometer.toLocaleString()} km</td>
+                      <td className="py-4 px-6">
+                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-extrabold tracking-wide ${getStatusBadgeClass(vehicle.status)}`}>
+                          {vehicle.status}
+                        </span>
+                      </td>
+                      <td className="py-4 px-6 text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            onClick={() => openDocModal(vehicle)}
+                            className="p-2 text-earth-muted hover:text-earth-clay hover:bg-earth-clay/10 rounded-xl transition-all cursor-pointer"
+                            title="Manage Documents"
+                          >
+                            <FileText className="w-4.5 h-4.5" />
+                          </button>
+                          <button
+                            onClick={() => openEditModal(vehicle)}
+                            className="p-2 text-earth-muted hover:text-earth-clay hover:bg-earth-clay/10 rounded-xl transition-all cursor-pointer"
+                            title="Edit"
+                          >
+                            <Edit className="w-4.5 h-4.5" />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(vehicle.id)}
+                            className="p-2 text-earth-muted hover:text-rose-500 hover:bg-rose-500/10 rounded-xl transition-all cursor-pointer"
+                            title="Delete"
+                          >
+                            <Trash2 className="w-4.5 h-4.5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="col-span-2">
-                  <label className="block text-xs font-bold text-slate-500 mb-1.5 uppercase">Model Name</label>
+          </div>
+
+          {/* MOBILE CARDS VIEW (Extremely User Friendly) */}
+          <div className="grid grid-cols-1 gap-4 md:hidden text-left">
+            {filteredVehicles.map((vehicle) => (
+              <div 
+                key={vehicle.id} 
+                className="bg-earth-surface border border-earth-border p-5 rounded-3xl shadow-xs space-y-4"
+              >
+                {/* Header: Title and Type */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-earth-clay/10 rounded-xl text-earth-clay border border-earth-clay/10">
+                      <Truck className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-sm text-earth-text">{vehicle.name_model}</h4>
+                      <span className="text-[10px] text-earth-muted font-extrabold uppercase tracking-wide">{vehicle.type}</span>
+                    </div>
+                  </div>
+                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-extrabold tracking-wide ${getStatusBadgeClass(vehicle.status)}`}>
+                    {vehicle.status}
+                  </span>
+                </div>
+
+                {/* Specs: Capacity & Odometer */}
+                <div className="grid grid-cols-2 gap-2 bg-earth-bg p-3 border border-earth-border rounded-2xl text-xs">
+                  <div>
+                    <span className="text-[9px] text-earth-muted font-bold uppercase tracking-wider block">Max Load</span>
+                    <span className="font-bold text-earth-text">{vehicle.max_load_capacity.toLocaleString()} kg</span>
+                  </div>
+                  <div>
+                    <span className="text-[9px] text-earth-muted font-bold uppercase tracking-wider block">Odometer</span>
+                    <span className="font-bold text-earth-text">{vehicle.odometer.toLocaleString()} km</span>
+                  </div>
+                </div>
+
+                {/* Info Block */}
+                <div className="flex justify-between items-center text-xs">
+                  <div>
+                    <span className="text-[9px] text-earth-muted font-bold block uppercase tracking-wider">Reg Number</span>
+                    <span className="font-mono font-bold text-earth-text">{vehicle.registration_number}</span>
+                  </div>
+                </div>
+
+                {/* Actions (Touch friendly: 48px height target zones) */}
+                <div className="flex items-center gap-2 pt-2 border-t border-earth-border">
+                  <button
+                    onClick={() => openDocModal(vehicle)}
+                    className="flex-1 flex items-center justify-center gap-1.5 py-2.5 bg-earth-bg hover:bg-earth-border border border-earth-border text-earth-text rounded-xl font-bold text-xs cursor-pointer"
+                  >
+                    <FileText className="w-4 h-4" /> Docs
+                  </button>
+                  <button
+                    onClick={() => openEditModal(vehicle)}
+                    className="flex-1 flex items-center justify-center gap-1.5 py-2.5 bg-earth-bg hover:bg-earth-border border border-earth-border text-earth-text rounded-xl font-bold text-xs cursor-pointer"
+                  >
+                    <Edit className="w-4 h-4" /> Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(vehicle.id)}
+                    className="px-3.5 py-2.5 bg-rose-500/10 border border-rose-500/20 text-rose-600 rounded-xl font-bold text-xs cursor-pointer"
+                    aria-label="Delete"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+
+      {/* Add/Edit Modal (Responsive) */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+          <div className="w-full max-w-lg bg-earth-bg border border-earth-border rounded-3xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="p-5 border-b border-earth-border flex items-center justify-between">
+              <h2 className="text-lg font-extrabold">{editId ? 'Edit Vehicle' : 'Add New Vehicle'}</h2>
+              <button onClick={() => setIsModalOpen(false)} className="text-earth-muted hover:text-earth-text font-bold text-sm cursor-pointer">Close</button>
+            </div>
+            <form onSubmit={handleSubmit} className="p-5 space-y-4 text-left max-h-[80vh] overflow-y-auto">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="sm:col-span-2">
+                  <label className="block text-[10px] font-bold text-earth-muted mb-1.5 uppercase tracking-wider">Model Name</label>
                   <input
                     type="text"
                     name="name_model"
@@ -484,11 +538,11 @@ export default function VehicleDashboard({ token }) {
                     placeholder="e.g. Tata Prima 4025.S"
                     value={form.name_model}
                     onChange={handleChange}
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-sm"
+                    className="w-full bg-earth-surface border border-earth-border px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-earth-clay/40 text-xs sm:text-sm text-earth-text placeholder-earth-muted"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 mb-1.5 uppercase">Reg Number</label>
+                  <label className="block text-[10px] font-bold text-earth-muted mb-1.5 uppercase tracking-wider">Reg Number</label>
                   <input
                     type="text"
                     name="registration_number"
@@ -496,16 +550,16 @@ export default function VehicleDashboard({ token }) {
                     placeholder="e.g. MH-12-PQ-9876"
                     value={form.registration_number}
                     onChange={handleChange}
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-sm"
+                    className="w-full bg-earth-surface border border-earth-border px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-earth-clay/40 text-xs sm:text-sm text-earth-text placeholder-earth-muted"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 mb-1.5 uppercase">Type</label>
+                  <label className="block text-[10px] font-bold text-earth-muted mb-1.5 uppercase tracking-wider">Type</label>
                   <select
                     name="type"
                     value={form.type}
                     onChange={handleChange}
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-sm"
+                    className="w-full bg-earth-surface border border-earth-border px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-earth-clay/40 text-xs sm:text-sm text-earth-text appearance-none"
                   >
                     <option value="Light Truck">Light Truck</option>
                     <option value="Medium Truck">Medium Truck</option>
@@ -515,7 +569,7 @@ export default function VehicleDashboard({ token }) {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 mb-1.5 uppercase">Max Load (kg)</label>
+                  <label className="block text-[10px] font-bold text-earth-muted mb-1.5 uppercase tracking-wider">Max Load (kg)</label>
                   <div className="relative">
                     <input
                       type="number"
@@ -525,13 +579,13 @@ export default function VehicleDashboard({ token }) {
                       placeholder="e.g. 24000"
                       value={form.max_load_capacity}
                       onChange={handleChange}
-                      className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 pl-4 pr-10 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-sm"
+                      className="w-full bg-earth-surface border border-earth-border pl-4 pr-10 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-earth-clay/40 text-xs sm:text-sm text-earth-text placeholder-earth-muted"
                     />
-                    <Weight className="absolute right-3.5 inset-y-0 my-auto w-4.5 h-4.5 text-slate-400" />
+                    <Weight className="absolute right-3.5 inset-y-0 my-auto w-4.5 h-4.5 text-earth-muted" />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 mb-1.5 uppercase">Odometer (km)</label>
+                  <label className="block text-[10px] font-bold text-earth-muted mb-1.5 uppercase tracking-wider">Odometer (km)</label>
                   <div className="relative">
                     <input
                       type="number"
@@ -541,13 +595,13 @@ export default function VehicleDashboard({ token }) {
                       placeholder="e.g. 45000"
                       value={form.odometer}
                       onChange={handleChange}
-                      className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 pl-4 pr-10 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-sm"
+                      className="w-full bg-earth-surface border border-earth-border pl-4 pr-10 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-earth-clay/40 text-xs sm:text-sm text-earth-text placeholder-earth-muted"
                     />
-                    <Gauge className="absolute right-3.5 inset-y-0 my-auto w-4.5 h-4.5 text-slate-400" />
+                    <Gauge className="absolute right-3.5 inset-y-0 my-auto w-4.5 h-4.5 text-earth-muted" />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 mb-1.5 uppercase">Acquisition Cost</label>
+                  <label className="block text-[10px] font-bold text-earth-muted mb-1.5 uppercase tracking-wider">Acquisition Cost</label>
                   <div className="relative">
                     <input
                       type="number"
@@ -557,18 +611,18 @@ export default function VehicleDashboard({ token }) {
                       placeholder="e.g. 2500000"
                       value={form.acquisition_cost}
                       onChange={handleChange}
-                      className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 pl-8 pr-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-sm"
+                      className="w-full bg-earth-surface border border-earth-border pl-8 pr-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-earth-clay/40 text-xs sm:text-sm text-earth-text placeholder-earth-muted"
                     />
-                    <span className="absolute left-3.5 inset-y-0 my-auto h-fit text-sm text-slate-400 font-bold">₹</span>
+                    <span className="absolute left-3.5 inset-y-0 my-auto h-fit text-xs sm:text-sm text-earth-muted font-bold">₹</span>
                   </div>
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 mb-1.5 uppercase">Status</label>
+                  <label className="block text-[10px] font-bold text-earth-muted mb-1.5 uppercase tracking-wider">Status</label>
                   <select
                     name="status"
                     value={form.status}
                     onChange={handleChange}
-                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-sm"
+                    className="w-full bg-earth-surface border border-earth-border px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-earth-clay/40 text-xs sm:text-sm text-earth-text appearance-none"
                   >
                     <option value="Available">Available</option>
                     <option value="On Trip">On Trip</option>
@@ -577,17 +631,17 @@ export default function VehicleDashboard({ token }) {
                   </select>
                 </div>
               </div>
-              <div className="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+              <div className="flex justify-end gap-3 pt-4 border-t border-earth-border">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700/80 rounded-xl text-sm font-semibold transition"
+                  className="flex-1 sm:flex-initial px-5 py-3 bg-earth-surface hover:bg-earth-border border border-earth-border rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white rounded-xl text-sm font-semibold shadow-lg transition"
+                  className="flex-1 sm:flex-initial px-5 py-3 bg-earth-clay hover:bg-earth-clay-hover text-white rounded-xl text-xs sm:text-sm font-bold shadow-md transition cursor-pointer"
                 >
                   {editId ? 'Save Changes' : 'Create Vehicle'}
                 </button>
@@ -599,59 +653,57 @@ export default function VehicleDashboard({ token }) {
 
       {/* Document Management Modal */}
       {isDocModalOpen && activeDocVehicle && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+          <div className="w-full max-w-md bg-earth-bg border border-earth-border rounded-3xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="p-5 border-b border-earth-border flex items-center justify-between text-left">
               <div>
-                <h2 className="text-lg font-extrabold">Documents Manager</h2>
-                <p className="text-xs text-slate-500 mt-0.5">{activeDocVehicle.name_model} ({activeDocVehicle.registration_number})</p>
+                <h2 className="text-base font-extrabold">Documents Manager</h2>
+                <p className="text-[10px] text-earth-muted mt-0.5">{activeDocVehicle.name_model} ({activeDocVehicle.registration_number})</p>
               </div>
-              <button onClick={() => setIsDocModalOpen(false)} className="text-slate-400 hover:text-slate-100 font-bold text-sm">Close</button>
+              <button onClick={() => setIsDocModalOpen(false)} className="text-earth-muted hover:text-earth-text font-bold text-xs cursor-pointer">Close</button>
             </div>
             
-            <div className="p-6 space-y-6">
-              {/* Add Doc Form */}
+            <div className="p-5 space-y-6 text-left">
               <form onSubmit={addMockDoc} className="space-y-3">
-                <label className="block text-xs font-bold text-slate-500 uppercase">Upload Vehicle Document (Mock)</label>
+                <label className="block text-[10px] font-bold text-earth-muted uppercase tracking-wider">Upload Vehicle Document (Mock)</label>
                 <div className="flex gap-2">
                   <input
                     type="text"
                     name="docName"
                     required
-                    placeholder="e.g. Pollution Certificate, Insurance"
-                    className="flex-1 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-3 py-2 rounded-xl focus:outline-none text-xs"
+                    placeholder="e.g. Pollution Certificate"
+                    className="flex-1 bg-earth-surface border border-earth-border px-3 py-2.5 rounded-xl focus:outline-none text-xs text-earth-text"
                   />
                   <button
                     type="submit"
-                    className="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-xl text-xs font-bold transition"
+                    className="px-4 py-2.5 bg-earth-clay hover:bg-earth-clay-hover text-white rounded-xl text-xs font-bold transition cursor-pointer"
                   >
                     Add
                   </button>
                 </div>
               </form>
 
-              {/* Docs List */}
               <div className="space-y-2.5">
-                <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wide">Stored Documents</h4>
+                <h4 className="text-[10px] font-bold text-earth-muted uppercase tracking-wide">Stored Documents</h4>
                 {(!docs[activeDocVehicle.id] || docs[activeDocVehicle.id].length === 0) ? (
-                  <div className="text-center p-6 border border-dashed border-slate-200 dark:border-slate-800 rounded-2xl">
-                    <FileText className="w-6 h-6 text-slate-400 mx-auto mb-1.5" />
-                    <span className="text-xs text-slate-500">No documents uploaded.</span>
+                  <div className="text-center p-6 border border-dashed border-earth-border rounded-2xl bg-earth-surface/50">
+                    <FileText className="w-6 h-6 text-earth-muted mx-auto mb-1.5" />
+                    <span className="text-xs text-earth-muted">No documents uploaded.</span>
                   </div>
                 ) : (
                   <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
                     {docs[activeDocVehicle.id].map((doc, idx) => (
-                      <div key={idx} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl">
+                      <div key={idx} className="flex items-center justify-between p-3 bg-earth-surface border border-earth-border rounded-xl">
                         <div className="flex items-center gap-2.5 min-w-0">
-                          <FileText className="w-4 h-4 text-purple-400 flex-shrink-0" />
+                          <FileText className="w-4 h-4 text-earth-clay flex-shrink-0" />
                           <div className="min-w-0">
                             <p className="text-xs font-bold truncate leading-tight">{doc.name}</p>
-                            <span className="text-[9px] text-slate-500">{doc.date} • {doc.size}</span>
+                            <span className="text-[9px] text-earth-muted">{doc.date} • {doc.size}</span>
                           </div>
                         </div>
                         <button
                           onClick={() => deleteDoc(idx)}
-                          className="p-1 text-slate-400 hover:text-red-500 rounded-lg hover:bg-red-500/10 transition"
+                          className="p-1 text-earth-muted hover:text-rose-500 rounded-lg hover:bg-rose-500/5 transition cursor-pointer"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>

@@ -1,22 +1,68 @@
 @import "tailwindcss";
 
-/* Custom styles and overrides */
-@layer base {
-  body {
-    background-color: #f8fafc; /* bg-slate-50 */
-    color: #0f172a; /* text-slate-900 */
-    transition-property: color, background-color;
-    transition-duration: 200ms;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  }
-
-  body.dark {
-    background-color: #030712; /* bg-slate-950 */
-    color: #f9fafb; /* text-slate-50 */
-  }
+/* Tailwind CSS v4 Theme Overrides for static variables */
+@theme {
+  --color-earth-clay: var(--earth-clay);
+  --color-earth-clay-hover: var(--earth-clay-hover);
+  --color-earth-sage: var(--earth-sage);
+  --color-earth-sage-hover: var(--earth-sage-hover);
 }
 
-/* Custom Scrollbar */
+/* Base values for dynamic CSS variables */
+:root {
+  --earth-bg: #fdfbf7;
+  --earth-surface: #f5f2eb;
+  --earth-border: #e5dfd3;
+  --earth-text: #2a2421;
+  --earth-muted: #786b64;
+  
+  --earth-clay: #d9744b;
+  --earth-clay-hover: #c2593f;
+  --earth-sage: #5b6e5d;
+  --earth-sage-hover: #4a5c4c;
+  
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Force dark mode values */
+.dark, body.dark, :root.dark {
+  --earth-bg: #151210 !important;
+  --earth-surface: #221d1a !important;
+  --earth-border: #352f2b !important;
+  --earth-text: #f4f0e6 !important;
+  --earth-muted: #958a81 !important;
+  
+  --earth-clay: #e0835c !important;
+  --earth-clay-hover: #e59371 !important;
+  --earth-sage: #758a77 !important;
+  --earth-sage-hover: #889e8a !important;
+}
+
+/* Direct Earthen Theme Utility Overrides (Bypasses compilation bugs, works dynamically in any browser) */
+.bg-earth-bg {
+  background-color: var(--earth-bg) !important;
+}
+.bg-earth-surface {
+  background-color: var(--earth-surface) !important;
+}
+.border-earth-border {
+  border-color: var(--earth-border) !important;
+}
+.text-earth-text {
+  color: var(--earth-text) !important;
+}
+.text-earth-muted {
+  color: var(--earth-muted) !important;
+}
+
+body {
+  background-color: var(--earth-bg);
+  color: var(--earth-text);
+  transition-property: color, background-color;
+  transition-duration: 200ms;
+}
+
+/* Custom Scrollbar for Earthen Theme */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -37,4 +83,13 @@
 
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
+}
+
+/* Earthen Glow utility */
+.earth-glow {
+  box-shadow: 0 0 40px rgba(217, 116, 75, 0.08);
+}
+
+.dark .earth-glow {
+  box-shadow: 0 0 40px rgba(217, 116, 75, 0.04);
 }

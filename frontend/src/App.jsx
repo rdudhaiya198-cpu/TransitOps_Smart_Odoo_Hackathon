@@ -64,9 +64,15 @@ function App() {
     }
   };
 
-  // 1. Show Landing Page if active
+  // 1. Show Landing Page if active (with theme toggle support)
   if (showLanding) {
-    return <LandingPage onLaunchConsole={() => setShowLanding(false)} />;
+    return (
+      <LandingPage 
+        onLaunchConsole={() => setShowLanding(false)} 
+        darkMode={darkMode}
+        setDarkMode={setDarkMode}
+      />
+    );
   }
 
   // 2. Show Authenticate wrapper if no session
@@ -75,7 +81,7 @@ function App() {
   }
 
   return (
-    <div className={`flex flex-col lg:flex-row min-h-screen ${darkMode ? 'dark bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-900'}`}>
+    <div className={`flex flex-col lg:flex-row min-h-screen ${darkMode ? 'dark' : ''} bg-earth-bg text-earth-text`}>
       {/* Navigation Sidebar */}
       <Sidebar 
         currentView={currentView} 
@@ -89,7 +95,7 @@ function App() {
       {/* Main Dashboard / Table Area */}
       <main className="flex-1 flex flex-col min-h-0 relative">
         {/* Top Floating Glow */}
-        <div className="absolute top-0 right-0 w-80 h-80 bg-purple-500/5 rounded-full filter blur-[100px] pointer-events-none"></div>
+        <div className="absolute top-0 right-0 w-80 h-80 bg-earth-clay/5 rounded-full filter blur-[100px] pointer-events-none"></div>
         {renderView()}
       </main>
     </div>
