@@ -1,18 +1,40 @@
 @import "tailwindcss";
 
+@theme {
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  --color-primary: #714B67;
+  --color-primary-dark: #5B3A53;
+  --color-primary-light: #F0E9EE;
+  
+  --color-secondary: #017E84;
+  
+  --color-success: #28A745;
+  --color-warning: #F0AD4E;
+  --color-danger: #DC3545;
+  
+  --color-surface: #F8F9FA;
+  --color-border: #E0E0E0;
+  
+  --color-text-main: #212529;
+  --color-text-muted: #6C757D;
+}
+
 /* Custom styles and overrides */
 @layer base {
   body {
-    background-color: #f8fafc; /* bg-slate-50 */
-    color: #0f172a; /* text-slate-900 */
+    background-color: var(--color-white, #FFFFFF);
+    color: var(--color-text-main, #212529);
     transition-property: color, background-color;
     transition-duration: 200ms;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    /* Inter is applied via Tailwind's default sans, but let's ensure it's standard */
+    font-family: var(--font-sans);
   }
 
   body.dark {
-    background-color: #030712; /* bg-slate-950 */
-    color: #f9fafb; /* text-slate-50 */
+    /* For now keeping a dark mode stub, though Odoo is primarily light */
+    background-color: #3D2839;
+    color: #F8F9FA;
   }
 }
 
@@ -27,14 +49,14 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #E0E0E0;
   border-radius: 4px;
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  background: #334155;
+  background: #714B67;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #8F8F8F;
 }

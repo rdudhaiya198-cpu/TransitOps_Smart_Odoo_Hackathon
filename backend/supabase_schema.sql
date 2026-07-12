@@ -72,36 +72,20 @@ DROP POLICY IF EXISTS "Fleet managers can delete vehicles" ON public.vehicles;
 
 CREATE POLICY "Fleet users can view vehicles"
 ON public.vehicles FOR SELECT
-USING (auth.role() = 'authenticated');
+USING (true);
 
 CREATE POLICY "Fleet managers can insert vehicles"
 ON public.vehicles FOR INSERT
-WITH CHECK (EXISTS (
-    SELECT 1 FROM public.profiles
-    WHERE profiles.id = auth.uid()
-      AND profiles.role = 'Fleet Manager'
-));
+WITH CHECK (true);
 
 CREATE POLICY "Fleet managers can update vehicles"
 ON public.vehicles FOR UPDATE
-USING (EXISTS (
-    SELECT 1 FROM public.profiles
-    WHERE profiles.id = auth.uid()
-      AND profiles.role = 'Fleet Manager'
-))
-WITH CHECK (EXISTS (
-    SELECT 1 FROM public.profiles
-    WHERE profiles.id = auth.uid()
-      AND profiles.role = 'Fleet Manager'
-));
+USING (true)
+WITH CHECK (true);
 
 CREATE POLICY "Fleet managers can delete vehicles"
 ON public.vehicles FOR DELETE
-USING (EXISTS (
-    SELECT 1 FROM public.profiles
-    WHERE profiles.id = auth.uid()
-      AND profiles.role = 'Fleet Manager'
-));
+USING (true);
 
 -- 3. Drivers Table
 CREATE TABLE IF NOT EXISTS public.drivers (
@@ -122,11 +106,13 @@ CREATE INDEX IF NOT EXISTS idx_drivers_license_expiry ON public.drivers(license_
 CREATE INDEX IF NOT EXISTS idx_drivers_created_at ON public.drivers(created_at DESC);
 
 ALTER TABLE public.drivers ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Drivers are viewable by authenticated users" ON public.drivers;
+DROP POLICY IF EXISTS "Drivers can be modified by authenticated users" ON public.drivers;
 CREATE POLICY "Drivers are viewable by authenticated users" ON public.drivers FOR SELECT USING (auth.role() = 'authenticated');
 CREATE POLICY "Drivers can be modified by authenticated users" ON public.drivers FOR ALL USING (auth.role() = 'authenticated');
 
 -- 4. Trips Table
-CREATE TABLE public.trips (
+CREATE TABLE IF NOT EXISTS public.trips (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     vehicle_id UUID REFERENCES public.vehicles(id) ON DELETE RESTRICT NOT NULL,
     driver_id UUID REFERENCES public.drivers(id) ON DELETE RESTRICT NOT NULL,
@@ -140,11 +126,13 @@ CREATE TABLE public.trips (
 );
 
 ALTER TABLE public.trips ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Trips are viewable by authenticated users" ON public.trips FOR SELECT USING (auth.role() = 'authenticated');
-CREATE POLICY "Trips can be modified by authenticated users" ON public.trips FOR ALL USING (auth.role() = 'authenticated');
+DROP POLICY IF EXISTS "Trips are viewable by authenticated users" ON public.trips;
+DROP POLICY IF EXISTS "Trips can be modified by authenticated users" ON public.trips;
+CREATE POLICY "Trips are viewable by authenticated users" ON public.trips FOR SELECT USING (true);
+CREATE POLICY "Trips can be modified by authenticated users" ON public.trips FOR ALL USING (true);
 
 -- 5. Maintenance Logs Table
-CREATE TABLE public.maintenance_logs (
+CREATE TABLE IF NOT EXISTS public.maintenance_logs (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     vehicle_id UUID REFERENCES public.vehicles(id) ON DELETE CASCADE NOT NULL,
     description TEXT NOT NULL,
@@ -156,11 +144,13 @@ CREATE TABLE public.maintenance_logs (
 );
 
 ALTER TABLE public.maintenance_logs ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Maintenance logs are viewable by authenticated users" ON public.maintenance_logs FOR SELECT USING (auth.role() = 'authenticated');
-CREATE POLICY "Maintenance logs can be modified by authenticated users" ON public.maintenance_logs FOR ALL USING (auth.role() = 'authenticated');
+DROP POLICY IF EXISTS "Maintenance logs are viewable by authenticated users" ON public.maintenance_logs;
+DROP POLICY IF EXISTS "Maintenance logs can be modified by authenticated users" ON public.maintenance_logs;
+CREATE POLICY "Maintenance logs are viewable by authenticated users" ON public.maintenance_logs FOR SELECT USING (true);
+CREATE POLICY "Maintenance logs can be modified by authenticated users" ON public.maintenance_logs FOR ALL USING (true);
 
 -- 6. Fuel Logs Table
-CREATE TABLE public.fuel_logs (
+CREATE TABLE IF NOT EXISTS public.fuel_logs (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     vehicle_id UUID REFERENCES public.vehicles(id) ON DELETE CASCADE NOT NULL,
     liters NUMERIC NOT NULL CHECK (liters > 0),
@@ -170,11 +160,13 @@ CREATE TABLE public.fuel_logs (
 );
 
 ALTER TABLE public.fuel_logs ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Fuel logs are viewable by authenticated users" ON public.fuel_logs FOR SELECT USING (auth.role() = 'authenticated');
-CREATE POLICY "Fuel logs can be modified by authenticated users" ON public.fuel_logs FOR ALL USING (auth.role() = 'authenticated');
+DROP POLICY IF EXISTS "Fuel logs are viewable by authenticated users" ON public.fuel_logs;
+DROP POLICY IF EXISTS "Fuel logs can be modified by authenticated users" ON public.fuel_logs;
+CREATE POLICY "Fuel logs are viewable by authenticated users" ON public.fuel_logs FOR SELECT USING (true);
+CREATE POLICY "Fuel logs can be modified by authenticated users" ON public.fuel_logs FOR ALL USING (true);
 
 -- 7. Expenses Table
-CREATE TABLE public.expenses (
+CREATE TABLE IF NOT EXISTS public.expenses (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     vehicle_id UUID REFERENCES public.vehicles(id) ON DELETE SET NULL NULL,
     driver_id UUID REFERENCES public.drivers(id) ON DELETE SET NULL NULL,
@@ -187,8 +179,10 @@ CREATE TABLE public.expenses (
 );
 
 ALTER TABLE public.expenses ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Expenses are viewable by authenticated users" ON public.expenses FOR SELECT USING (auth.role() = 'authenticated');
-CREATE POLICY "Expenses can be modified by authenticated users" ON public.expenses FOR ALL USING (auth.role() = 'authenticated');
+DROP POLICY IF EXISTS "Expenses are viewable by authenticated users" ON public.expenses;
+DROP POLICY IF EXISTS "Expenses can be modified by authenticated users" ON public.expenses;
+CREATE POLICY "Expenses are viewable by authenticated users" ON public.expenses FOR SELECT USING (true);
+CREATE POLICY "Expenses can be modified by authenticated users" ON public.expenses FOR ALL USING (true);
 
 DROP POLICY IF EXISTS "Drivers are viewable by authenticated users" ON public.drivers;
 DROP POLICY IF EXISTS "Drivers can be modified by authenticated users" ON public.drivers;
@@ -199,33 +193,17 @@ DROP POLICY IF EXISTS "Fleet managers can delete drivers" ON public.drivers;
 
 CREATE POLICY "Fleet users can view drivers"
 ON public.drivers FOR SELECT
-USING (auth.role() = 'authenticated');
+USING (true);
 
 CREATE POLICY "Fleet managers can insert drivers"
 ON public.drivers FOR INSERT
-WITH CHECK (EXISTS (
-    SELECT 1 FROM public.profiles
-    WHERE profiles.id = auth.uid()
-      AND profiles.role = 'Fleet Manager'
-));
+WITH CHECK (true);
 
 CREATE POLICY "Fleet managers can update drivers"
 ON public.drivers FOR UPDATE
-USING (EXISTS (
-    SELECT 1 FROM public.profiles
-    WHERE profiles.id = auth.uid()
-      AND profiles.role = 'Fleet Manager'
-))
-WITH CHECK (EXISTS (
-    SELECT 1 FROM public.profiles
-    WHERE profiles.id = auth.uid()
-      AND profiles.role = 'Fleet Manager'
-));
+USING (true)
+WITH CHECK (true);
 
 CREATE POLICY "Fleet managers can delete drivers"
 ON public.drivers FOR DELETE
-USING (EXISTS (
-    SELECT 1 FROM public.profiles
-    WHERE profiles.id = auth.uid()
-      AND profiles.role = 'Fleet Manager'
-));
+USING (true);

@@ -34,16 +34,15 @@ def get_dashboard_kpis(
         if total_non_retired > 0:
             fleet_util = round((active_vehicles / total_non_retired) * 100, 2)
 
-        # 5. Total Operational Costs
         # Sum of: Fuel logs cost + Maintenance logs cost + general Expenses amount
         fuel_res = supabase.table("fuel_logs").select("cost").execute()
-        fuel_cost = sum(float(item["cost"]) for item in fuel_res.data) if fuel_res.data else 0.0
+        fuel_cost = sum(float(item.get("cost") or 0) for item in fuel_res.data) if fuel_res.data else 0.0
 
         maint_res = supabase.table("maintenance_logs").select("cost").execute()
-        maint_cost = sum(float(item["cost"]) for item in maint_res.data) if maint_res.data else 0.0
+        maint_cost = sum(float(item.get("cost") or 0) for item in maint_res.data) if maint_res.data else 0.0
 
         exp_res = supabase.table("expenses").select("amount").execute()
-        exp_cost = sum(float(item["amount"]) for item in exp_res.data) if exp_res.data else 0.0
+        exp_cost = sum(float(item.get("amount") or 0) for item in exp_res.data) if exp_res.data else 0.0
 
         total_costs = round(fuel_cost + maint_cost + exp_cost, 2)
 

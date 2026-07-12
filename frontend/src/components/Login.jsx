@@ -70,33 +70,29 @@ export default function Login({ onLoginSuccess }) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden bg-slate-900">
-      {/* Decorative gradients */}
-      <div className="absolute top-0 -left-4 w-96 h-96 bg-purple-500 rounded-full filter blur-[128px] opacity-20 animate-pulse"></div>
-      <div className="absolute bottom-0 -right-4 w-96 h-96 bg-blue-500 rounded-full filter blur-[128px] opacity-20 animate-pulse delay-1000"></div>
-
+    <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden bg-[var(--color-surface)]">
       <div className="w-full max-w-md z-10">
-        <div className="bg-slate-800/40 backdrop-blur-xl border border-slate-700/50 p-8 rounded-3xl shadow-2xl transition-all duration-300">
+        <div className="bg-white border border-[var(--color-border)] p-8 rounded-[6px] shadow-sm transition-all duration-300">
           
           {/* Logo / Header */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center p-3 bg-gradient-to-tr from-purple-600 to-blue-600 rounded-2xl mb-4 shadow-lg shadow-purple-500/20">
+            <div className="inline-flex items-center justify-center p-3 bg-[var(--color-primary)] rounded-[6px] mb-4">
               <Shield className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-3xl font-extrabold tracking-tight text-white">
-              Transit<span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">Ops</span>
+            <h1 className="text-3xl font-bold tracking-tight text-[var(--color-text-main)]">
+              Transit<span className="text-[var(--color-secondary)]">Ops</span>
             </h1>
-            <p className="text-slate-400 mt-2 text-sm">Smart Transport Operations Platform</p>
+            <p className="text-[var(--color-text-muted)] mt-2 text-sm">Smart Transport Operations Platform</p>
           </div>
 
           {error && (
-            <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-3 rounded-xl mb-6 text-sm flex flex-col gap-1">
+            <div className="bg-red-50 border border-red-200 text-red-700 p-3 rounded-[6px] mb-6 text-sm flex flex-col gap-1">
               <span>{error}</span>
               {error.includes('FastAPI backend') && (
                 <button
                   type="button"
                   onClick={handleDemoMode}
-                  className="text-left font-bold underline mt-1 text-purple-400 hover:text-purple-300 transition-colors"
+                  className="text-left font-bold underline mt-1 text-[var(--color-primary)] hover:text-[var(--color-primary-dark)] transition-colors"
                 >
                   Enter Demo/Offline Mode (No backend required)
                 </button>
@@ -105,16 +101,16 @@ export default function Login({ onLoginSuccess }) {
           )}
 
           {success && (
-            <div className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 p-3 rounded-xl mb-6 text-sm">
+            <div className="bg-green-50 border border-green-200 text-green-700 p-3 rounded-[6px] mb-6 text-sm">
               {success}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-slate-300 text-xs font-semibold uppercase tracking-wider mb-2">Email Address</label>
+              <label className="block text-[var(--color-text-muted)] text-xs font-semibold uppercase tracking-wider mb-2">Email Address</label>
               <div className="relative">
-                <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500">
+                <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
                   <Mail className="w-5 h-5" />
                 </span>
                 <input
@@ -123,15 +119,15 @@ export default function Login({ onLoginSuccess }) {
                   placeholder="name@company.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-slate-900/60 border border-slate-700/80 rounded-xl pl-10 pr-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 transition-all duration-200"
+                  className="w-full bg-white border border-[var(--color-border)] rounded-[6px] pl-10 pr-4 py-2.5 text-[var(--color-text-main)] placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] transition-all duration-200"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-slate-300 text-xs font-semibold uppercase tracking-wider mb-2">Password</label>
+              <label className="block text-[var(--color-text-muted)] text-xs font-semibold uppercase tracking-wider mb-2">Password</label>
               <div className="relative">
-                <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500">
+                <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
                   <Lock className="w-5 h-5" />
                 </span>
                 <input
@@ -140,27 +136,27 @@ export default function Login({ onLoginSuccess }) {
                   placeholder="********"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-slate-900/60 border border-slate-700/80 rounded-xl pl-10 pr-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 transition-all duration-200"
+                  className="w-full bg-white border border-[var(--color-border)] rounded-[6px] pl-10 pr-4 py-2.5 text-[var(--color-text-main)] placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] transition-all duration-200"
                 />
               </div>
             </div>
 
             {isRegister && (
               <div>
-                <label className="block text-slate-300 text-xs font-semibold uppercase tracking-wider mb-2">Assign Role</label>
+                <label className="block text-[var(--color-text-muted)] text-xs font-semibold uppercase tracking-wider mb-2">Assign Role</label>
                 <div className="relative">
-                  <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500">
+                  <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
                     <UserPlus className="w-5 h-5" />
                   </span>
                   <select
                     value={role}
                     onChange={(e) => setRole(e.target.value)}
-                    className="w-full bg-slate-900/60 border border-slate-700/80 rounded-xl pl-10 pr-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 transition-all duration-200 appearance-none"
+                    className="w-full bg-white border border-[var(--color-border)] rounded-[6px] pl-10 pr-4 py-2.5 text-[var(--color-text-main)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] transition-all duration-200 appearance-none"
                   >
-                    <option value="Fleet Manager" className="bg-slate-800 text-white">Fleet Manager</option>
-                    <option value="Driver" className="bg-slate-800 text-white">Driver</option>
-                    <option value="Safety Officer" className="bg-slate-800 text-white">Safety Officer</option>
-                    <option value="Financial Analyst" className="bg-slate-800 text-white">Financial Analyst</option>
+                    <option value="Fleet Manager">Fleet Manager</option>
+                    <option value="Driver">Driver</option>
+                    <option value="Safety Officer">Safety Officer</option>
+                    <option value="Financial Analyst">Financial Analyst</option>
                   </select>
                 </div>
               </div>
@@ -169,7 +165,7 @@ export default function Login({ onLoginSuccess }) {
             <button
               type="submit"
               disabled={loading}
-              className="w-full mt-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-semibold py-3 px-4 rounded-xl shadow-lg hover:shadow-purple-500/25 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full mt-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] text-white font-medium py-2.5 px-4 rounded-[6px] transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50"
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -189,21 +185,21 @@ export default function Login({ onLoginSuccess }) {
             <button
               type="button"
               onClick={() => setIsRegister(!isRegister)}
-              className="text-purple-400 hover:text-purple-300 font-medium transition-colors"
+              className="text-[var(--color-primary)] hover:text-[var(--color-primary-dark)] font-medium transition-colors"
             >
               {isRegister ? 'Already have an account? Sign In' : "Don't have an account? Sign Up"}
             </button>
 
             <div className="relative flex py-2 items-center">
-              <div className="flex-grow border-t border-slate-700/60"></div>
-              <span className="flex-shrink mx-4 text-slate-500 text-xs uppercase tracking-widest">Or test quickly</span>
-              <div className="flex-grow border-t border-slate-700/60"></div>
+              <div className="flex-grow border-t border-gray-200"></div>
+              <span className="flex-shrink mx-4 text-gray-400 text-xs uppercase tracking-widest">Or test quickly</span>
+              <div className="flex-grow border-t border-gray-200"></div>
             </div>
 
             <button
               type="button"
               onClick={handleDemoMode}
-              className="w-full bg-slate-700/40 hover:bg-slate-700/70 border border-slate-600/40 text-slate-300 py-2.5 rounded-xl font-medium transition-all duration-200 flex items-center justify-center gap-2"
+              className="w-full bg-white hover:bg-gray-50 border border-[var(--color-border)] text-[var(--color-text-main)] py-2.5 rounded-[6px] font-medium transition-all duration-200 flex items-center justify-center gap-2"
             >
               Enter Demo / Preview Mode
             </button>

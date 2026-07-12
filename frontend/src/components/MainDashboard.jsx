@@ -5,7 +5,9 @@ import {
   Users, 
   Activity, 
   ShieldCheck, 
+  DollarSign
 } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
 export default function MainDashboard({ token }) {
   const [stats, setStats] = useState({
@@ -14,7 +16,10 @@ export default function MainDashboard({ token }) {
     totalDrivers: 0,
     avgSafetyScore: 100,
     inShopVehicles: 0,
-    availableDrivers: 0
+    availableDrivers: 0,
+    activeTrips: 0,
+    fleetUtilization: 0,
+    totalCosts: 0
   });
   const [loading, setLoading] = useState(true);
 
@@ -25,6 +30,13 @@ export default function MainDashboard({ token }) {
       try {
         let vehicles = [];
         let drivers = [];
+        let kpis = {
+            active_vehicles: 0,
+            vehicles_in_maintenance: 0,
+            active_trips: 0,
+            fleet_utilization_percent: 0,
+            total_operational_costs: 0
+        };
 
         if (token === 'demo-token') {
           // Demo/offline mode
@@ -34,23 +46,23 @@ export default function MainDashboard({ token }) {
           drivers = storedD ? JSON.parse(storedD) : [];
         } else {
           // Try to fetch from backend API
-          const resV = await fetch(`${API_BASE_URL}/vehicles`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-          });
-          const resD = await fetch(`${API_BASE_URL}/drivers`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-          });
-          if (resV.ok && resD.ok) {
+          const headers = { 'Authorization': `Bearer ${token}` };
+          const [resV, resD, resKPI] = await Promise.all([
+            fetch(`${API_BASE_URL}/vehicles`, { headers }),
+            fetch(`${API_BASE_URL}/drivers`, { headers }),
+            fetch(`${API_BASE_URL}/dashboard/kpis`, { headers })
+          ]);
+          
+          if (resV.ok && resD.ok && resKPI.ok) {
             vehicles = await resV.json();
             drivers = await resD.json();
+            kpis = await resKPI.json();
           } else {
-            throw new Error();
+            console.warn("One or more API requests failed");
           }
         }
 
         const totalV = vehicles.length;
-        const activeV = vehicles.filter(v => v.status === 'On Trip').length;
-        const inShopV = vehicles.filter(v => v.status === 'In Shop').length;
         const totalD = drivers.length;
         const availableD = drivers.filter(d => d.status === 'Available').length;
         const totalSafety = drivers.reduce((acc, curr) => acc + parseFloat(curr.safety_score), 0);
@@ -58,14 +70,17 @@ export default function MainDashboard({ token }) {
 
         setStats({
           totalVehicles: totalV,
-          activeVehicles: activeV,
+          activeVehicles: kpis.active_vehicles || 0,
           totalDrivers: totalD,
           avgSafetyScore: avgSafety,
-          inShopVehicles: inShopV,
-          availableDrivers: availableD
+          inShopVehicles: kpis.vehicles_in_maintenance || 0,
+          availableDrivers: availableD,
+          activeTrips: kpis.active_trips || 0,
+          fleetUtilization: kpis.fleet_utilization_percent || 0,
+          totalCosts: kpis.total_operational_costs || 0
         });
-      } catch {
-        console.warn("Failed loading stats. Resetting to defaults.");
+      } catch (err) {
+        console.warn("Failed loading stats. Resetting to defaults.", err);
       } finally {
         setLoading(false);
       }
@@ -76,28 +91,28 @@ export default function MainDashboard({ token }) {
 
   const cards = [
     {
-      title: 'Total Fleet Size',
-      value: stats.totalVehicles,
-      icon: Truck,
-      color: 'from-purple-500 to-indigo-500',
-      shadow: 'shadow-purple-500/10',
-      description: `${stats.inShopVehicles} Vehicles currently in Shop`
-    },
-    {
-      title: 'Active Operations',
-      value: stats.activeVehicles,
+      title: 'Active Trips',
+      value: stats.activeTrips,
       icon: Activity,
       color: 'from-blue-500 to-cyan-500',
       shadow: 'shadow-blue-500/10',
-      description: 'Vehicles currently on route'
+      description: 'Trips currently dispatched'
     },
     {
-      title: 'Operator Database',
-      value: stats.totalDrivers,
-      icon: Users,
+      title: 'Fleet Utilization',
+      value: `${stats.fleetUtilization}%`,
+      icon: Truck,
+      color: 'from-purple-500 to-indigo-500',
+      shadow: 'shadow-purple-500/10',
+      description: `${stats.activeVehicles} active vehicles`
+    },
+    {
+      title: 'Operational Costs',
+      value: `$${stats.totalCosts}`,
+      icon: DollarSign,
       color: 'from-emerald-500 to-teal-500',
       shadow: 'shadow-emerald-500/10',
-      description: `${stats.availableDrivers} Drivers ready for trip`
+      description: 'Total expenses & fuel'
     },
     {
       title: 'Fleet Safety Score',
@@ -109,12 +124,21 @@ export default function MainDashboard({ token }) {
     }
   ];
 
+  // Dummy chart data for demo purposes if backend isn't returning timeseries yet.
+  const costData = [
+    { name: 'Mon', cost: Math.max(stats.totalCosts * 0.1, 100) },
+    { name: 'Tue', cost: Math.max(stats.totalCosts * 0.2, 150) },
+    { name: 'Wed', cost: Math.max(stats.totalCosts * 0.15, 120) },
+    { name: 'Thu', cost: Math.max(stats.totalCosts * 0.25, 200) },
+    { name: 'Fri', cost: Math.max(stats.totalCosts * 0.3, 250) },
+  ];
+
   return (
     <div className="flex-1 overflow-auto p-4 md:p-8">
       {/* Welcome Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-extrabold tracking-tight">Fleet Command Center</h1>
-        <p className="text-slate-500 dark:text-slate-400 mt-1">Real-time status overview of TransitOps operations.</p>
+        <h1 className="text-3xl font-bold tracking-tight text-[var(--color-text-main)]">Fleet Command Center</h1>
+        <p className="text-[var(--color-text-muted)] mt-1">Real-time status overview of TransitOps operations.</p>
       </div>
 
       {/* Grid of Stats Cards */}
@@ -124,21 +148,18 @@ export default function MainDashboard({ token }) {
           return (
             <div 
               key={idx} 
-              className={`bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm hover:shadow-md transition-all duration-200 relative overflow-hidden`}
+              className={`bg-white border border-[var(--color-border)] rounded-[6px] p-6 shadow-sm hover:shadow-md transition-all duration-200 relative overflow-hidden`}
             >
-              {/* Background gradient bar */}
-              <div className={`absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r ${card.color}`}></div>
-              
               <div className="flex items-center justify-between mb-4">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{card.title}</span>
-                <div className={`p-2.5 bg-gradient-to-tr ${card.color} text-white rounded-xl shadow-lg ${card.shadow}`}>
+                <span className="text-xs font-bold text-[var(--color-text-muted)] uppercase tracking-wider">{card.title}</span>
+                <div className={`p-2 bg-[var(--color-surface)] text-[var(--color-primary)] rounded-[6px]`}>
                   <Icon className="w-5 h-5" />
                 </div>
               </div>
               
               <div className="space-y-1">
-                <span className="text-4xl font-extrabold tracking-tight">{loading ? '...' : card.value}</span>
-                <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">{card.description}</p>
+                <span className="text-3xl font-bold tracking-tight text-[var(--color-text-main)]">{loading ? '...' : card.value}</span>
+                <p className="text-xs text-[var(--color-text-muted)] font-medium">{card.description}</p>
               </div>
             </div>
           );
@@ -147,70 +168,42 @@ export default function MainDashboard({ token }) {
 
       {/* Operational Highlights */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Quick Operations Metrics */}
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm lg:col-span-2">
-          <h3 className="font-extrabold text-lg mb-4">Operational Status Distribution</h3>
-          
-          <div className="space-y-5">
-            <div>
-              <div className="flex justify-between text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
-                <span>Vehicles On Route (Utilization Rate)</span>
-                <span>{stats.totalVehicles > 0 ? Math.round((stats.activeVehicles / stats.totalVehicles) * 100) : 0}%</span>
-              </div>
-              <div className="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-blue-500 rounded-full transition-all duration-500" 
-                  style={{ width: `${stats.totalVehicles > 0 ? (stats.activeVehicles / stats.totalVehicles) * 100 : 0}%` }}
-                ></div>
-              </div>
-            </div>
-
-            <div>
-              <div className="flex justify-between text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
-                <span>Vehicles In Maintenance</span>
-                <span>{stats.totalVehicles > 0 ? Math.round((stats.inShopVehicles / stats.totalVehicles) * 100) : 0}%</span>
-              </div>
-              <div className="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-amber-500 rounded-full transition-all duration-500" 
-                  style={{ width: `${stats.totalVehicles > 0 ? (stats.inShopVehicles / stats.totalVehicles) * 100 : 0}%` }}
-                ></div>
-              </div>
-            </div>
-
-            <div>
-              <div className="flex justify-between text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
-                <span>Operator Readiness</span>
-                <span>{stats.totalDrivers > 0 ? Math.round((stats.availableDrivers / stats.totalDrivers) * 100) : 0}%</span>
-              </div>
-              <div className="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-emerald-500 rounded-full transition-all duration-500" 
-                  style={{ width: `${stats.totalDrivers > 0 ? (stats.availableDrivers / stats.totalDrivers) * 100 : 0}%` }}
-                ></div>
-              </div>
-            </div>
+        {/* Operations Chart (Recharts) */}
+        <div className="bg-white border border-[var(--color-border)] rounded-[6px] p-6 shadow-sm lg:col-span-2">
+          <h3 className="font-bold text-lg mb-4 text-[var(--color-text-main)]">Weekly Operational Costs (Simulated)</h3>
+          <div className="h-64 w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={costData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E0E0E0" />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6C757D' }} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6C757D' }} />
+                <Tooltip 
+                  cursor={{ fill: 'var(--color-surface)' }}
+                  contentStyle={{ borderRadius: '6px', border: '1px solid var(--color-border)', boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}
+                />
+                <Bar dataKey="cost" fill="#714B67" radius={[2, 2, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
         </div>
 
         {/* Live Safety Summary Card */}
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 text-white shadow-xl relative overflow-hidden flex flex-col justify-between">
-          <div className="absolute top-0 right-0 w-48 h-48 bg-purple-500 rounded-full filter blur-[80px] opacity-20"></div>
+        <div className="bg-white border border-[var(--color-border)] rounded-[6px] p-6 shadow-sm flex flex-col justify-between">
           <div>
-            <h3 className="font-extrabold text-lg mb-1.5 text-white">Safety Command Overview</h3>
-            <p className="text-xs text-slate-400">Compliance & Driving Auditing score summaries.</p>
+            <h3 className="font-bold text-lg mb-1.5 text-[var(--color-text-main)]">Safety Command Overview</h3>
+            <p className="text-xs text-[var(--color-text-muted)]">Compliance & Driving Auditing score summaries.</p>
           </div>
           
           <div className="my-6 flex items-center justify-center">
-            <div className="relative flex items-center justify-center w-28 h-28 rounded-full border-4 border-slate-800">
+            <div className="relative flex items-center justify-center w-28 h-28 rounded-full border-[3px] border-[var(--color-primary-light)]">
               <div className="text-center">
-                <span className="text-3xl font-extrabold tracking-tight">{stats.avgSafetyScore}</span>
-                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-0.5">Rating</p>
+                <span className="text-3xl font-bold tracking-tight text-[var(--color-primary)]">{stats.avgSafetyScore}</span>
+                <p className="text-[10px] text-[var(--color-text-muted)] font-bold uppercase tracking-wider mt-0.5">Rating</p>
               </div>
             </div>
           </div>
 
-          <div className="text-xs text-slate-400 text-center font-medium bg-slate-800 p-3 rounded-2xl border border-slate-800">
+          <div className="text-xs text-[var(--color-text-main)] text-center font-medium bg-[var(--color-surface)] p-3 rounded-[6px] border border-[var(--color-border)]">
             {stats.avgSafetyScore >= 90 
               ? "Excellent driving patterns detected across fleet operators." 
               : stats.avgSafetyScore >= 75 

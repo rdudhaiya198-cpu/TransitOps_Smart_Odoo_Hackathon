@@ -4,6 +4,8 @@ import Sidebar from './components/Sidebar';
 import MainDashboard from './components/MainDashboard';
 import VehicleDashboard from './components/VehicleDashboard';
 import DriverDashboard from './components/DriverDashboard';
+import TripDashboard from './components/TripDashboard';
+import MaintenanceDashboard from './components/MaintenanceDashboard';
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem('transitops_token') || null);
@@ -56,6 +58,10 @@ function App() {
         return <VehicleDashboard token={token} />;
       case 'drivers':
         return <DriverDashboard token={token} />;
+      case 'trips':
+        return <TripDashboard token={token} />;
+      case 'maintenance':
+        return <MaintenanceDashboard token={token} />;
       default:
         return <MainDashboard token={token} />;
     }
@@ -67,7 +73,7 @@ function App() {
   }
 
   return (
-    <div className={`flex flex-col lg:flex-row min-h-screen ${darkMode ? 'dark bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-900'}`}>
+    <div className={`flex flex-col lg:flex-row min-h-screen ${darkMode ? 'dark bg-[var(--color-primary-dark)] text-[var(--color-surface)]' : 'bg-[var(--color-surface)] text-[var(--color-text-main)]'}`}>
       {/* Navigation Sidebar */}
       <Sidebar 
         currentView={currentView} 
@@ -79,9 +85,7 @@ function App() {
       />
 
       {/* Main Dashboard / Table Area */}
-      <main className="flex-1 flex flex-col min-h-0 relative">
-        {/* Top Floating Glow */}
-        <div className="absolute top-0 right-0 w-80 h-80 bg-purple-500/5 rounded-full filter blur-[100px] pointer-events-none"></div>
+      <main className={`flex-1 flex flex-col min-h-0 relative ${darkMode ? 'bg-black/20' : 'bg-white'}`}>
         {renderView()}
       </main>
     </div>
