@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "routes": [
+    { "src": "/auth/(.*)", "dest": "/api/index.py" },
+    { "src": "/vehicles/(.*)", "dest": "/api/index.py" },
+    { "src": "/drivers/(.*)", "dest": "/api/index.py" },
+    { "src": "/trips/(.*)", "dest": "/api/index.py" },
+    { "src": "/maintenance/(.*)", "dest": "/api/index.py" },
+    { "src": "/expenses/(.*)", "dest": "/api/index.py" },
+    { "src": "/dashboard/(.*)", "dest": "/api/index.py" },
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
+}
