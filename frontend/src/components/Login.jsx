@@ -31,7 +31,14 @@ export default function Login({ onLoginSuccess }) {
         body: JSON.stringify(payload),
       });
 
-      const data = await response.json();
+      let data;
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.indexOf("application/json") !== -1) {
+        data = await response.json();
+      } else {
+        const text = await response.text();
+        throw new Error(`Connection error with FastAPI backend. Server returned non-JSON: ${text.substring(0, 50)}...`);
+      }
 
       if (!response.ok) {
         throw new Error(data.detail || 'Something went wrong');
