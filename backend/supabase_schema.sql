@@ -48,3 +48,69 @@ CREATE TABLE public.drivers (
 ALTER TABLE public.drivers ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Drivers are viewable by authenticated users" ON public.drivers FOR SELECT USING (auth.role() = 'authenticated');
 CREATE POLICY "Drivers can be modified by authenticated users" ON public.drivers FOR ALL USING (auth.role() = 'authenticated');
+
+-- 4. Trips Table
+CREATE TABLE public.trips (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    vehicle_id UUID REFERENCES public.vehicles(id) ON DELETE RESTRICT NOT NULL,
+    driver_id UUID REFERENCES public.drivers(id) ON DELETE RESTRICT NOT NULL,
+    cargo_weight NUMERIC NOT NULL CHECK (cargo_weight > 0),
+    status TEXT NOT NULL CHECK (status IN ('Scheduled', 'Dispatched', 'Completed', 'Cancelled')) DEFAULT 'Scheduled',
+    start_location TEXT NOT NULL,
+    destination TEXT NOT NULL,
+    dispatch_time TIMESTAMP WITH TIME ZONE NULL,
+    completion_time TIMESTAMP WITH TIME ZONE NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+ALTER TABLE public.trips ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Trips are viewable by authenticated users" ON public.trips FOR SELECT USING (auth.role() = 'authenticated');
+CREATE POLICY "Trips can be modified by authenticated users" ON public.trips FOR ALL USING (auth.role() = 'authenticated');
+
+-- 5. Maintenance Logs Table
+CREATE TABLE public.maintenance_logs (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    vehicle_id UUID REFERENCES public.vehicles(id) ON DELETE CASCADE NOT NULL,
+    description TEXT NOT NULL,
+    start_date DATE NOT NULL DEFAULT CURRENT_DATE,
+    end_date DATE NULL,
+    cost NUMERIC NOT NULL DEFAULT 0 CHECK (cost >= 0),
+    status TEXT NOT NULL CHECK (status IN ('Open', 'Closed')) DEFAULT 'Open',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+ALTER TABLE public.maintenance_logs ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Maintenance logs are viewable by authenticated users" ON public.maintenance_logs FOR SELECT USING (auth.role() = 'authenticated');
+CREATE POLICY "Maintenance logs can be modified by authenticated users" ON public.maintenance_logs FOR ALL USING (auth.role() = 'authenticated');
+
+-- 6. Fuel Logs Table
+CREATE TABLE public.fuel_logs (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    vehicle_id UUID REFERENCES public.vehicles(id) ON DELETE CASCADE NOT NULL,
+    liters NUMERIC NOT NULL CHECK (liters > 0),
+    cost NUMERIC NOT NULL CHECK (cost >= 0),
+    date DATE NOT NULL DEFAULT CURRENT_DATE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+ALTER TABLE public.fuel_logs ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Fuel logs are viewable by authenticated users" ON public.fuel_logs FOR SELECT USING (auth.role() = 'authenticated');
+CREATE POLICY "Fuel logs can be modified by authenticated users" ON public.fuel_logs FOR ALL USING (auth.role() = 'authenticated');
+
+-- 7. Expenses Table
+CREATE TABLE public.expenses (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    vehicle_id UUID REFERENCES public.vehicles(id) ON DELETE SET NULL NULL,
+    driver_id UUID REFERENCES public.drivers(id) ON DELETE SET NULL NULL,
+    trip_id UUID REFERENCES public.trips(id) ON DELETE SET NULL NULL,
+    amount NUMERIC NOT NULL CHECK (amount >= 0),
+    category TEXT NOT NULL CHECK (category IN ('Fuel', 'Maintenance', 'Toll', 'Food', 'Other')),
+    description TEXT NULL,
+    date DATE NOT NULL DEFAULT CURRENT_DATE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+ALTER TABLE public.expenses ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Expenses are viewable by authenticated users" ON public.expenses FOR SELECT USING (auth.role() = 'authenticated');
+CREATE POLICY "Expenses can be modified by authenticated users" ON public.expenses FOR ALL USING (auth.role() = 'authenticated');
+
